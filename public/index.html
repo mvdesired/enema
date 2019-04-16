@@ -22,6 +22,7 @@
     <script defer src="/__/firebase/init.js"></script>
     <script defer src="/js/jquery.js"></script>
     <script defer src="/js/bootstrap.js"></script>
+    <script defer src="/js/bootstrap-notify.js"></script>
     <script defer src="/js/waves.js"></script>
     <script defer src="/js/angular.js"></script>
     <script defer src="/js/angularfire.js"></script>
@@ -36,6 +37,18 @@
   <body ng-controller="enemaController" ng-init="init()">
       <div class="content-changer" ng-cloak ng-view>
 
+      </div>
+      <div class="mainLoader" ng-show="mainLoader">
+        <div class="mainLoaderContent">
+            <div class="spinner-layer pl-purple">
+                <div class="circle-clipper left">
+                    <div class="circle"></div>
+                </div>
+                <div class="circle-clipper right">
+                    <div class="circle"></div>
+                </div>
+              </div>
+        </div>
       </div>
   </body>
 </html>

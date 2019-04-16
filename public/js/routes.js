@@ -1,12 +1,15 @@
 enemaApp.config(['$routeProvider',
   function($routeProvider) {
     $routeProvider.
-       when('/login', {
-         templateUrl: 'views/login.html',
-       }).
-      // when('/sign-in', {
-      //   templateUrl: 'screen-03-02.html'
-      // }).
+      when("/", {
+        templateUrl : "dashbaord.html"
+      }).
+      when('/login', {
+         templateUrl: 'views/index.html',
+      }).
+      when('/dashbaord', {
+        templateUrl: 'views/dashbaord.html'
+      })
       // when('/sign-up', {
       //   templateUrl: 'screen-03.html'
       // }).
@@ -46,8 +49,8 @@ enemaApp.config(['$routeProvider',
       // when('/radius-changer', {
       //   templateUrl: 'screen-07.html',
       // }).
-      otherwise({
-        templateUrl: 'index.html',
-        //redirectTo: '/'
-      });
+       //otherwise({
+         //templateUrl: 'index.html',
+      //   //redirectTo: '/'
+      // });
   }])
