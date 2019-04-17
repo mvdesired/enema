@@ -1,6 +1,6 @@
 enemaApp.controller('enemaController',['$scope','$window','$location','$http','$localStorage','$timeout','$document','$interval','$sce','$firebaseAuth',
 function($scope,$window,$location,$http,$localStorage,$timeout,$document,$interval,$sce,$firebaseAuth){
-    $scope.lcl = $localStorage;
+    $scope.$lcl = $localStorage;
     $scope.fAuth = $firebaseAuth();
     $scope.loginEmail = '';
     $scope.loginPassword = '';
@@ -8,16 +8,12 @@ function($scope,$window,$location,$http,$localStorage,$timeout,$document,$interv
     $scope.isLoading = false;
     /**Initializing Init Function*********/
     $scope.init = function(){
-        if($scope.isUserLoggedIn()){
-            //$location.path('/dashbaord');
-        }
-        else{
-            //$location.path('/login');
+        if(!$scope.isUserLoggedIn()){
+            $location.path('/login');
         }
     }
     $scope.isUserLoggedIn = function(){
-        console.log($scope.lcl.uid);
-        if ($scope.lcl) {
+        if ($scope.$lcl.uid) {
             return true;
         }
     }
@@ -26,11 +22,10 @@ function($scope,$window,$location,$http,$localStorage,$timeout,$document,$interv
         $scope.fAuth.$signInWithEmailAndPassword($scope.loginEmail, $scope.loginPassword).then(function(result){
             $scope.showNoti(200,'Logged in Successfully');
             $scope.isLoading = false;
-            $scope.lcl.uid = result.uid;
-            $location.path('/dashbaord');
+            $scope.$lcl.uid = result.user.uid;
+            //$location.path('/');
         }).catch(function(error) {
             $scope.isLoading = false;
-            console.log(error);
             if(error.code=='auth/invalid-email'){
                 $scope.showNoti(500,'Please enter a valid emailID');
             }

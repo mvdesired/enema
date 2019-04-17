@@ -10,6 +10,7 @@
     <link href="/css/animate.css" rel="stylesheet" />
     <link href="/css/waves.css" rel="stylesheet" />
     <link href="/css/style.css" rel="stylesheet">
+    <link href="/css/theme-red.css" rel="stylesheet" />
     <!-- update the version number as needed -->
     <script defer src="/__/firebase/5.9.3/firebase-app.js"></script>
     <!-- include only the Firebase features as you need -->
@@ -29,26 +30,87 @@
     <script defer src="/js/angular-route.js"></script>
     <script defer src="/js/angular-sanitize.min.js"></script>
     <script defer src="/js/storage.js"></script>
+    <script defer src="/js/slimscroll.js"></script>
     <script defer src="/js/scripts.js"></script>
     <script defer src="/js/routes.js"></script>
     <script defer src="/js/controller.js"></script>
     <script defer src="/js/admin.js"></script>
   </head>
-  <body ng-controller="enemaController" ng-init="init()">
+  <body ng-controller="enemaController" ng-init="init()" class="theme-red">
+      <div class="overlay"></div>
+      <div class="search-bar">
+          <div class="search-icon">
+              <i class="material-icons">search</i>
+          </div>
+          <input type="text" placeholder="START TYPING...">
+          <div class="close-search">
+              <i class="material-icons">close</i>
+          </div>
+    </div>
+      <div ng-if="isUserLoggedIn()">
+          
+          <!-- #END# Search Bar -->
+          <!-- Top Bar -->
+          <nav class="navbar">
+              <div class="container-fluid">
+                  <div class="navbar-header">
+                      <a href="javascript:void(0);" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false"></a>
+                      <a href="javascript:void(0);" class="bars"></a>
+                      <a class="navbar-brand" href="/">Enema Admin</a>
+                  </div>
+              </div>
+          </nav>
+          <section>
+              <!-- Left Sidebar -->
+              <aside id="leftsidebar" class="sidebar">
+                  <!-- User Info -->
+                  <div class="user-info">
+                      <div class="info-container">
+                          <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Enema Admin</div>
+                      </div>
+                  </div>
+                  <!-- #User Info -->
+                  <!-- Menu -->
+                  <div class="menu">
+                      <ul class="list">
+                          <li class="header">MAIN NAVIGATION</li>
+                          <li class="active">
+                              <a href="/">
+                                  <i class="material-icons">home</i>
+                                  <span>Home</span>
+                              </a>
+                          </li>
+                      </ul>
+                  </div>
+                  <!-- #Menu -->
+                  <!-- Footer -->
+                  <div class="legal">
+                      <div class="copyright">
+                          &copy; 2019 - 2020 <a href="javascript:void(0);">Enema</a>.
+                      </div>
+                  </div>
+                  <!-- #Footer -->
+              </aside>
+              <!-- #END# Left Sidebar -->
+          </section>
+      </div>
       <div class="content-changer" ng-cloak ng-view>
 
       </div>
-      <div class="mainLoader" ng-show="mainLoader">
-        <div class="mainLoaderContent">
-            <div class="spinner-layer pl-purple">
-                <div class="circle-clipper left">
-                    <div class="circle"></div>
-                </div>
-                <div class="circle-clipper right">
-                    <div class="circle"></div>
-                </div>
+      <div class="page-loader-wrapper" ng-show="mainLoader">
+          <div class="loader">
+              <div class="preloader">
+                  <div class="spinner-layer pl-red">
+                      <div class="circle-clipper left">
+                          <div class="circle"></div>
+                      </div>
+                      <div class="circle-clipper right">
+                          <div class="circle"></div>
+                      </div>
+                  </div>
               </div>
-        </div>
+              <p>Please wait...</p>
+          </div>
       </div>
   </body>
 </html>

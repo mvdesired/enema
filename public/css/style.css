@@ -1,5 +1,8 @@
 ﻿/* Navbar ====================================== */
 @import url(materialize.css);
+html, body, .content-changer{
+  height: 100%;
+}
 .navbar {
   font-family: "Roboto", sans-serif;
   -webkit-border-radius: 0;
@@ -7767,11 +7770,19 @@ fieldset[disabled] .form-control {
 .login-page {
   background-color: #00BCD4;
   padding-left: 0;
-  
-  overflow-x: hidden; }
+  height: 100%;
+  overflow-x: hidden; 
+  display: table;
+  width: 100%;
+}
+.login-page .login-wrapper{
+  display: table-cell;  
+  vertical-align: middle;
+}
   .login-page .login-box{
     max-width: 360px;
     margin: 5% auto;
+
   }
   .login-page .login-box .msg {
     color: #555;
