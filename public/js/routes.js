@@ -15,10 +15,10 @@ enemaApp.config(['$routeProvider',
       }).
       when('/city-edit/:key', {
         templateUrl: 'views/city-edit.html'
+      }).
+      when('/categories', {
+        templateUrl: 'views/categories.html'
       })
-      // when('/forgot-password', {
-      //   templateUrl: 'forgot-password.html'
-      // }).
       // when('/forgot-password-token-check', {
       //   templateUrl: 'forgot-password-token-check.html'
       // }).

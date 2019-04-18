@@ -1,5 +1,5 @@
-enemaApp.controller('enemaController',['$scope','$location','$localStorage','$firebaseAuth','$firebaseObject','$firebaseStorage','$firebaseArray','$routeParams',
-function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseStorage,$firebaseArray,$routeParams){
+enemaApp.controller('enemaController',['$scope','$location','$localStorage','$firebaseAuth','$firebaseObject','$firebaseStorage','$firebaseArray','$routeParams','$window',
+function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseStorage,$firebaseArray,$routeParams,$window){
     $scope.$lcl = $localStorage;
     $scope.fAuth = $firebaseAuth();
     $scope.fDB = firebase.database();
@@ -11,6 +11,7 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
     $scope.isLoading = false;
     $scope.isUploading = false;
     $scope.editCity = {};
+    $scope.curCatKey = '';
     /**Initializing Init Function*********/
     $scope.init = function(){
         if(!$scope.isUserLoggedIn()){
@@ -28,7 +29,7 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
             $scope.showNoti(200,'Logged in Successfully');
             $scope.isLoading = false;
             $scope.$lcl.uid = result.user.uid;
-            //$location.path('/');
+            $location.path('/');
         }).catch(function(error) {
             $scope.isLoading = false;
             if(error.code=='auth/invalid-email'){
@@ -85,6 +86,9 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
             '</div>'
         });
     }
+    $scope.getClass = function (path) {
+        return ($location.path() === path) ? 'active' : '';
+    }
     /********City Page Functions *********/
     $scope.getCityList = function(){
         var cityObject = $scope.fDB.ref('APP_DATA').child('AVAILABLE_LOCATIONS');
@@ -97,7 +101,6 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
               cityObj.push({loc_key:key,location_name:value.location_name,location_image:value.location_image});
               $scope.cityKeys.push(key);
            });
-           console.log(cityObj,$scope.cityKeys);
          });
          $scope.cityList = cityObj;
          obj.$bindTo($scope, "cityList");
@@ -118,6 +121,7 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
                 $scope.showNoti(200,'City Added Successfully');
                 $scope.isLoading = false;
                 $scope.mediaFile = [];
+                $window.reload();
               });
         });
         uploadTask.$progress(snapshot=>{
@@ -129,10 +133,6 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
         uploadTask.$error(err=>{
             console.error(err);
         });
-        
-        /*cityObject.$add({
-            location_name: $scope.location_name
-        });*/
     }
     $scope.changeImage = function(event){
         $scope.mediaFile = event.target.files[0];
@@ -148,13 +148,95 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
         });
     }
     $scope.saveCity = function(){
-        
+        var cityKey = $routeParams.key;
+        var cityDObject = $scope.fDB.ref('APP_DATA').child('AVAILABLE_LOCATIONS').child(cityKey);
+        var obj = $firebaseObject(cityDObject);
+        obj.location_name = $scope.editCity.location_name;
+        obj.location_image = $scope.editCity.location_image;
+        obj.$save().then(function(ref) {
+            $scope.showNoti(200,"City Updated");
+            ref.key === obj.$id; // true
+          }, function(error) {
+            $scope.showNoti(404,error);
+          });
+    }
+    $scope.deleteCity = function(key){
+        var cityDObject = $scope.fDB.ref('APP_DATA').child('AVAILABLE_LOCATIONS').child(key);
+        var obj = $firebaseObject(cityDObject);
+        obj.$remove().then(function(ref) {
+            $scope.showNoti(200,"City Deleted");
+        }, function(error) {
+            console.log("Error:", error);
+            $scope.showNoti(404,error);
+        });
+    }
+    /****** Category Functions ******/
+    $scope.getCategoryList = function(){
+        var categoryObject = $scope.fDB.ref('APP_DATA').child('CATEGORIES_DATA');
+        var obj = $firebaseObject(categoryObject);
+        var catObj = [];
+        $scope.catKeys = [];
+        obj.$loaded().then(function() {
+            // To iterate the key/value pairs of the object, use angular.forEach()
+            angular.forEach(obj, function(value, key) {
+                catObj.push({category_name:value.category_name});
+               $scope.catKeys.push(key);
+            });
+        });
+        $scope.catList = catObj;
+        obj.$bindTo($scope, "catList");
+    }
+    $scope.editCat = function(key){
+        console.log(key);
+        var catDObject = $scope.fDB.ref('APP_DATA').child('CATEGORIES_DATA').child(key);
+        var obj = $firebaseArray(catDObject);
+        obj.$loaded().then(function() {
+            $scope.category_name = obj[0].$value;
+            $scope.curCatKey = key;
+        });
+    }
+    $scope.saveCat = function(){
+        $scope.isLoading = true;
+        if($scope.curCatKey){
+            var catDObject = $scope.fDB.ref('APP_DATA').child('CATEGORIES_DATA').child($scope.curCatKey);
+            var obj = $firebaseObject(catDObject);
+            obj.category_name = $scope.category_name;
+            obj.$save().then(function(ref) {
+                $scope.showNoti(200,"Category Updated");
+                $scope.curCatKey = '';
+                $scope.category_name = '';
+                $scope.isLoading = false;
+                ref.key === obj.$id; // true
+            }, function(error) {
+                $scope.showNoti(404,error);
+            });
+        }
+        else{
+            var CatObject = $scope.fDB.ref('APP_DATA').child('CATEGORIES_DATA');
+            $firebaseArray(CatObject).$add({
+                'category_name': $scope.category_name,
+            });
+            $scope.showNoti(200,'Category Added Successfully');
+            $scope.category_name = '';
+            $scope.isLoading = false;
+        }
+    }
+    $scope.deleteCat = function(key){
+        var catDObject = $scope.fDB.ref('APP_DATA').child('CATEGORIES_DATA').child(key);
+        var obj = $firebaseObject(catDObject);
+        obj.$remove().then(function(ref) {
+            $scope.showNoti(200,"Category Deleted");
+        }, function(error) {
+            console.log("Error:", error);
+            $scope.showNoti(404,error);
+        });
     }
     /****** Route Changes ********/
     $scope.$on('$routeChangeStart',function(scope, next, current){
         $scope.mainLoader = true;
     });
     $scope.$on('$routeChangeSuccess',function(scope, next, current){
+        //$scope.currentPage = next.$route.originalPath;
         $scope.mainLoader = false;
     });
 }]);

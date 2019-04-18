@@ -19,15 +19,9 @@
                         <div class="form-group">
                             <div class="form-line">
                                 <img ng-src="{{$parent.editCity.location_image}}" height="100px"/>
-                                <input type="file" onchange="angular.element(this).scope().changeImage(event)" accept="image/*" id="location_image" class="form-control" placeholder="Location Image">
                             </div>
                         </div>
-                        <div class="progress" ng-show="$parent.isUploading">
-                            <div class="progress-bar bg-orange progress-bar-striped active" role="progressbar" aria-valuenow="{{$parent.percentUploaded}}" aria-valuemin="0" aria-valuemax="100" style="width: {{$parent.percentUploaded}}%;">
-                                {{$parent.percentUploaded}}
-                            </div>
-                        </div>
-                        <button type="button" class="btn btn-primary m-t-15 waves-effect" ng-disabled="$parent.isLoading" ng-click="$parent.addCity()">Save</button>
+                        <button type="button" class="btn btn-primary m-t-15 waves-effect" ng-disabled="$parent.isLoading" ng-click="$parent.saveCity()">Save</button>
                     </form>
                 </div>
             </div>

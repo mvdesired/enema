@@ -19,9 +19,6 @@
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th>
-                                        <input type="checkbox" />
-                                    </th>
                                     <th>City</th>
                                     <th>Image</th>
                                     <th>Action</th>
@@ -29,18 +26,15 @@
                             </thead>
                             <tbody>
                                 <tr ng-repeat="cl in $parent.cityList">
-                                    <th scope="row">
-                                        <input type="checkbox" class="filled-in" id="chk-box-{{$index}}"/><label for="chk-box-{{$index}}">&nbsp;</label>
-                                    </th>
                                     <td ng-bind="cl.location_name"></td>
                                     <td>
-                                        <!-- <img ng-src="{{cl.location_image}}" height="50" /> -->
+                                        <img ng-src="{{cl.location_image}}" height="50" />
                                     </td>
                                     <td>
                                         <a ng-href="#!/city-edit/{{$parent.cityKeys[$index]}}" class="btn btn-primary btn-sm waves-effect">
                                             <i class="material-icons">edit </i>
                                         </a>
-                                        <button type="button" class="btn btn-danger btn-sm waves-effect">
+                                        <button type="button" class="btn btn-danger btn-sm waves-effect" ng-click="$parent.deleteCity($parent.cityKeys[$index])">
                                             <i class="material-icons">delete</i>
                                         </button>
                                     </td>
