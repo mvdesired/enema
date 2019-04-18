@@ -1,0 +1,35 @@
+<section class="content" >
+    <div class="container-fluid">
+        <div class="block-header">
+            <h2>Add City</h2>
+        </div>
+    </div>
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+                <div class="body">
+                    <form>
+                        <label for="location_name">City Name</label>
+                        <div class="form-group">
+                            <div class="form-line">
+                                <input type="text" id="location_name" ng-model="$parent.location_name" class="form-control" placeholder="City Name">
+                            </div>
+                        </div>
+                        <label for="location_image">Location Image</label>
+                        <div class="form-group">
+                            <div class="form-line">
+                                <input type="file" onchange="angular.element(this).scope().changeImage(event)" accept="image/*" id="location_image" ng-model="$parent.location_image" class="form-control" placeholder="Location Image">
+                            </div>
+                        </div>
+                        <div class="progress" ng-show="$parent.isUploading">
+                            <div class="progress-bar bg-orange progress-bar-striped active" role="progressbar" aria-valuenow="{{$parent.percentUploaded}}" aria-valuemin="0" aria-valuemax="100" style="width: {{$parent.percentUploaded}}%;">
+                                {{$parent.percentUploaded}}
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-primary m-t-15 waves-effect" ng-disabled="$parent.isLoading" ng-click="$parent.addCity()">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

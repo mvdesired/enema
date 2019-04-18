@@ -6,10 +6,16 @@ enemaApp.config(['$routeProvider',
       }).
       when('/login', {
          templateUrl: 'views/login.html',
+      }).
+      when('/cities', {
+        templateUrl: 'views/city-list.html'
+      }).
+      when('/city-add', {
+        templateUrl: 'views/city-add.html'
+      }).
+      when('/city-edit/:key', {
+        templateUrl: 'views/city-edit.html'
       })
-      // when('/sign-up', {
-      //   templateUrl: 'screen-03.html'
-      // }).
       // when('/forgot-password', {
       //   templateUrl: 'forgot-password.html'
       // }).

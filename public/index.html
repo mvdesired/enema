@@ -37,8 +37,8 @@
     <script defer src="/js/admin.js"></script>
   </head>
   <body ng-controller="enemaController" ng-init="init()" class="theme-red">
-      <div class="overlay"></div>
-      <div class="search-bar">
+        <div class="overlay"></div>
+        <div class="search-bar">
           <div class="search-icon">
               <i class="material-icons">search</i>
           </div>
@@ -46,7 +46,7 @@
           <div class="close-search">
               <i class="material-icons">close</i>
           </div>
-    </div>
+        </div>
       <div ng-if="isUserLoggedIn()">
           
           <!-- #END# Search Bar -->
@@ -80,6 +80,12 @@
                                   <span>Home</span>
                               </a>
                           </li>
+                          <li class="active">
+                            <a href="#!cities">
+                                <i class="material-icons">border_horizontal</i>
+                                <span>City</span>
+                            </a>
+                        </li>
                       </ul>
                   </div>
                   <!-- #Menu -->

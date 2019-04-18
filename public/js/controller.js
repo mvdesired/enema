@@ -1,11 +1,16 @@
-enemaApp.controller('enemaController',['$scope','$window','$location','$http','$localStorage','$timeout','$document','$interval','$sce','$firebaseAuth',
-function($scope,$window,$location,$http,$localStorage,$timeout,$document,$interval,$sce,$firebaseAuth){
+enemaApp.controller('enemaController',['$scope','$location','$localStorage','$firebaseAuth','$firebaseObject','$firebaseStorage','$firebaseArray','$routeParams',
+function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseStorage,$firebaseArray,$routeParams){
     $scope.$lcl = $localStorage;
     $scope.fAuth = $firebaseAuth();
+    $scope.fDB = firebase.database();
+    $scope.fStorage = firebase.storage();
     $scope.loginEmail = '';
     $scope.loginPassword = '';
     $scope.mainLoader = true;
+    $scope.mediaFile = [];
     $scope.isLoading = false;
+    $scope.isUploading = false;
+    $scope.editCity = {};
     /**Initializing Init Function*********/
     $scope.init = function(){
         if(!$scope.isUserLoggedIn()){
@@ -79,6 +84,71 @@ function($scope,$window,$location,$http,$localStorage,$timeout,$document,$interv
             '<a href="{3}" target="{4}" data-notify="url"></a>' +
             '</div>'
         });
+    }
+    /********City Page Functions *********/
+    $scope.getCityList = function(){
+        var cityObject = $scope.fDB.ref('APP_DATA').child('AVAILABLE_LOCATIONS');
+        var obj = $firebaseObject(cityObject);
+        var cityObj = [];
+        $scope.cityKeys = [];
+        obj.$loaded().then(function() {
+           // To iterate the key/value pairs of the object, use angular.forEach()
+           angular.forEach(obj, function(value, key) {
+              cityObj.push({loc_key:key,location_name:value.location_name,location_image:value.location_image});
+              $scope.cityKeys.push(key);
+           });
+           console.log(cityObj,$scope.cityKeys);
+         });
+         $scope.cityList = cityObj;
+         obj.$bindTo($scope, "cityList");
+    }
+    $scope.addCity = function(){
+        var cityObject = $scope.fDB.ref('APP_DATA').child('AVAILABLE_LOCATIONS');
+        var f_storageRef = $scope.fStorage.ref("availble_locations_image/"+$scope.mediaFile.name);
+        var f_storage = $firebaseStorage(f_storageRef);
+        var uploadTask = f_storage.$put($scope.mediaFile);
+        uploadTask.$complete(snapshot=>{
+            var imagePath = $scope.fStorage.ref("availble_locations_image/"+$scope.mediaFile.name);
+            $firebaseStorage(imagePath).$getDownloadURL().then(function(url) {
+                $firebaseArray(cityObject).$add({
+                    'location_name': $scope.location_name,
+                    'location_image':url
+                  });
+                $scope.isUploading = false;
+                $scope.showNoti(200,'City Added Successfully');
+                $scope.isLoading = false;
+                $scope.mediaFile = [];
+              });
+        });
+        uploadTask.$progress(snapshot=>{
+            var percentUploaded = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            $scope.percentUploaded = percentUploaded;
+            $scope.isUploading = true;
+            $scope.isLoading = true;
+        });
+        uploadTask.$error(err=>{
+            console.error(err);
+        });
+        
+        /*cityObject.$add({
+            location_name: $scope.location_name
+        });*/
+    }
+    $scope.changeImage = function(event){
+        $scope.mediaFile = event.target.files[0];
+    }
+    $scope.cityDetails = function(){
+        $scope.mainLoader = true;
+        var cityKey = $routeParams.key;
+        var cityDObject = $scope.fDB.ref('APP_DATA').child('AVAILABLE_LOCATIONS').child(cityKey);
+        var obj = $firebaseArray(cityDObject);
+        obj.$loaded().then(function() {
+            $scope.editCity = {location_name:obj[1].$value,location_image:obj[0].$value};
+            $scope.mainLoader = false;
+        });
+    }
+    $scope.saveCity = function(){
+        
     }
     /****** Route Changes ********/
     $scope.$on('$routeChangeStart',function(scope, next, current){

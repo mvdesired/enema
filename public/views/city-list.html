@@ -1,0 +1,56 @@
+<section class="content" ng-init="$parent.getCityList()">
+    <div class="container-fluid">
+        <div class="block-header">
+            <h2>City List</h2>
+        </div>
+        <!-- Bordered Table -->
+        <div class="row clearfix">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="card">
+                    <div class="header">
+                        <h2>
+                            <a href="#!city-add" class="btn btn-info">
+                                <i class="material-icons">control_point</i>
+                                Add
+                            </a>
+                        </h2>
+                    </div>
+                    <div class="body table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <input type="checkbox" />
+                                    </th>
+                                    <th>City</th>
+                                    <th>Image</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="cl in $parent.cityList">
+                                    <th scope="row">
+                                        <input type="checkbox" class="filled-in" id="chk-box-{{$index}}"/><label for="chk-box-{{$index}}">&nbsp;</label>
+                                    </th>
+                                    <td ng-bind="cl.location_name"></td>
+                                    <td>
+                                        <!-- <img ng-src="{{cl.location_image}}" height="50" /> -->
+                                    </td>
+                                    <td>
+                                        <a ng-href="#!/city-edit/{{$parent.cityKeys[$index]}}" class="btn btn-primary btn-sm waves-effect">
+                                            <i class="material-icons">edit </i>
+                                        </a>
+                                        <button type="button" class="btn btn-danger btn-sm waves-effect">
+                                            <i class="material-icons">delete</i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- #END# Bordered Table -->
+    </div>
+</section>
