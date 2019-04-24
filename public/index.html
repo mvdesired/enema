@@ -35,6 +35,7 @@
     <script defer src="/js/slimscroll.js"></script>
     <script defer src="/js/scripts.js"></script>
     <script defer src="/js/routes.js"></script>
+    <script defer src="/js/services.js"></script>
     <script defer src="/js/controller.js"></script>
     <script defer src="/js/admin.js"></script>
 </head>
@@ -95,6 +96,12 @@
                             <a href="#!categories">
                                 <i class="material-icons">border_horizontal</i>
                                 <span>Categories</span>
+                            </a>
+                        </li>
+                        <li ng-class="getClass('/courses')">
+                            <a href="#!courses">
+                                <i class="material-icons">assignment</i>
+                                <span>Courses</span>
                             </a>
                         </li>
                     </ul>

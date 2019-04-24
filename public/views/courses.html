@@ -1,0 +1,185 @@
+<section class="content" ng-init="$parent.getCoursesList()">
+    <div class="container-fluid">
+        <div class="block-header">
+            <h2>Courses</h2>
+        </div>
+        <div class="row clearfix">
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                <div class="card">
+                    <div class="header">
+                        <h2>Courses Add/Edit</h2>
+                    </div>
+                    <div class="body">
+                        <div class="form-group">
+                            <label for="course_name">Course Name</label>
+                            <div class="form-line">
+                                <input type="text" id="course_name" ng-model="$parent.course_name" class="form-control" placeholder="Course Name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="course_city">City</label>
+                            <div class="form-line">
+                                <input type="text" id="course_city" ng-model="$parent.course_city" class="form-control" placeholder="Course City">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="course_location">Location</label>
+                            <div class="form-line">
+                                <input type="text" id="course_location" ng-model="$parent.course_location" class="form-control" placeholder="Course Location">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="course_price">Actual Price</label>
+                            <div class="form-line">
+                                <input type="text" id="course_price" ng-model="$parent.course_price" class="form-control" placeholder="Actual Price">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="course_d_price">Dicount Price</label>
+                            <div class="form-line">
+                                <input type="text" id="course_d_price" ng-model="$parent.course_d_price" class="form-control" placeholder="Discount Price">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Course Requirement</label>
+                            <div class="form-group">
+                                <span ng-repeat="pdC in $parent.preDefineCourse">
+                                    <input type="checkbox" id="course_requirement_{{$index}}"  value="{{pdC}}" ng-checked="$parent.selection.indexOf(pdC) > -1" ng-click="$parent.toggleSelection(pdC)" value="Laptop" name="courseRequirement[]" class="filled-in">
+                                    <label for="course_requirement_{{$index}}">{{pdC}}</label>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="course_image">Course Image</label>
+                            <input type="file" class="form-control" onchange="angular.element(this).scope().changeImage(event)" accept="image/*" id="course_image" ng-model="$parent.course_image"/>
+                        </div>
+                        <div class="gallery_image">
+                            <div class="form-group">
+                                <label for="course_gallery">Course Gallery</label>
+                                <input type="file" class="form-control" onchange="angular.element(this).scope().galleryImage(event)" accept="image/*" id="course_gallery" ng-model="$parent.course_gallery" multiple/>
+                            </div>
+                            <div class="form-group">
+                                <div id="aniimated-thumbnials" class="list-unstyled row clearfix">
+                                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-repeat="mi in $parent.multiImagesSrc">
+                                        <div class="ng-thumbnails">
+                                            <span ng-click="$parent.removeGImage($index)" class="removeThis">
+                                                <i class="material-icons">delete</i>
+                                            </span>
+                                            <img class="img-responsive thumbnail" ng-src="{{mi}}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                        <div class="course_slots" ng-repeat="cTS in $parent.courseTimeSlots">
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label>Slot Date</label>
+                                    <div class="form-line">
+                                        <select class="form-control" ng-model="cTS.slot_date">
+                                            <option ng-repeat="x in [].constructor(31) track by $index" ng-selected="$index+1 == cTS.slot_date" value="{{$index+1}}">{{$index+1}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label>Slot Month</label>
+                                    <div class="form-line">
+                                        <select class="form-control" ng-model="cTS.slot_day">
+                                            <option ng-repeat="d in $parent.days" ng-selected="d == cTS.slot_day" value="{{d}}">{{d}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label>Slot Month</label>
+                                    <div class="form-line">
+                                        <select class="form-control" ng-model="cTS.slot_month">
+                                            <option ng-repeat="m in $parent.month" ng-selected="m == cTS.slot_month" value="{{m}}">{{m}}</option>
+                                        </select>
+                                    </div>
+                                    
+                                </div>
+                                <div class="col-sm-6">
+                                    <label>Slot Year</label>
+                                    <div class="form-line">
+                                        <select class="form-control" ng-model="cTS.slot_year">
+                                            <option value="2019" ng-selected="cTS.slot_year == '2019'">2019</option>
+                                            <option value="2020" ng-selected="cTS.slot_year == '2020'">2020</option>
+                                            <option value="2021" ng-selected="cTS.slot_year == '2021'">2021</option>
+                                            <option value="2022" ng-selected="cTS.slot_year == '2022'">2022</option>
+                                            <option value="2023" ng-selected="cTS.slot_year == '2023'">2023</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="course_time_slots">
+                                <div class="form-group" ng-repeat="TS in cTS.TIME_SLOT">
+                                    <div class="col-sm-5">
+                                        <label>Time From</label>
+                                        <div class="form-line">
+                                            <select class="form-control" ng-model="TS.time_from">
+                                                <option ng-repeat="x in [].constructor(12) track by $index" ng-selected="'{{$index+1}} AM' == TS.time_from" value="{{$index+1}} AM">{{$index+1}} AM</option>
+                                                <option ng-repeat="x in [].constructor(12) track by $index" ng-selected="'{{$index+1}} PM' == TS.time_from" value="{{$index+1}} PM">{{$index+1}} PM</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <label>Time To</label>
+                                        <div class="form-line">
+                                            <select class="form-control" ng-model="TS.time_to">
+                                                <option ng-repeat="x in [].constructor(12) track by $index" ng-selected="'{{$index+1}} AM' == TS.time_to" value="{{$index+1} AM}">{{$index+1}} AM</option>
+                                                <option ng-repeat="x in [].constructor(12) track by $index" ng-selected="'{{$index+1}} PM' == TS.time_to" value="{{$index+1}} PM">{{$index+1}} PM</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <span class="">
+                                            <i class="material-icons">add_box</i>
+                                        </span>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                            <span class="add_course_slot" add-course-slot>
+                                <i class="material-icons">add_box</i>
+                            </span>
+                        </div>
+                        <button type="button" class="btn btn-primary m-t-15 waves-effect" ng-disabled="$parent.isLoading" ng-click="$parent.saveCourse()">Save</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                <div class="card">
+                    <div class="header">
+                        <h2>Courses List</h2>
+                    </div>
+                    <div class="body table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="cl in $parent.courseList">
+                                    <td ng-bind="cl.course_name"></td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm waves-effect"
+                                            ng-click="$parent.courseList.$remove(cl)">
+                                            <i class="material-icons">delete</i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

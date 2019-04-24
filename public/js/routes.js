@@ -18,6 +18,9 @@ enemaApp.config(['$routeProvider',
       }).
       when('/categories', {
         templateUrl: 'views/categories.html'
+      }).
+      when('/courses', {
+        templateUrl: 'views/courses.html'
       })
       // when('/forgot-password-token-check', {
       //   templateUrl: 'forgot-password-token-check.html'

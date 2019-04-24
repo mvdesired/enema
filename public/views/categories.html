@@ -13,41 +13,44 @@
                         <label for="category_name">Category Name</label>
                         <div class="form-group">
                             <div class="form-line">
-                                <input type="text" id="category_name" ng-model="$parent.category_name" class="form-control" placeholder="Category Name">
+                                <input type="text" id="category_name" ng-model="$parent.category_name"
+                                    class="form-control" placeholder="Category Name">
                             </div>
                         </div>
-                        <button type="button" class="btn btn-primary m-t-15 waves-effect" ng-disabled="$parent.isLoading" ng-click="$parent.saveCat()">Save</button>
+                        <button type="button" class="btn btn-primary m-t-15 waves-effect"
+                            ng-disabled="$parent.isLoading" ng-click="$parent.saveCat()">Save</button>
                     </div>
                 </div>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                    <div class="card">
-                        <div class="header">
-                            <h2>Category List</h2>
-                        </div>
-                        <div class="body table-responsive">
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr ng-repeat="cl in $parent.catList">
-                                        <td ng-bind="cl.category_name"></td>
-                                        <td>
-                                            <button type="button" class="btn btn-primary btn-sm waves-effect" ng-click="$parent.editCat($parent.catKeys[$index])">
-                                                    <i class="material-icons">edit </i>
-                                            </button>
-                                            <button type="button" class="btn btn-danger btn-sm waves-effect" ng-click="$parent.deleteCat($parent.catKeys[$index])">
-                                                <i class="material-icons">delete</i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                <div class="card">
+                    <div class="header">
+                        <h2>Category List</h2>
+                    </div>
+                    <div class="body table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="cl in $parent.catList">
+                                    <td ng-bind="cl.category_name"></td>
+                                    <td>
+                                        <button type="button" class="btn btn-primary btn-sm waves-effect"
+                                            ng-click="$parent.editCat($parent.catKeys[$index])">
+                                            <i class="material-icons">edit </i>
+                                        </button>
+                                        <button type="button" class="btn btn-danger btn-sm waves-effect"
+                                            ng-click="$parent.deleteCat($parent.catKeys[$index])">
+                                            <i class="material-icons">delete</i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

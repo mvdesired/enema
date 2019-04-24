@@ -1,5 +1,5 @@
-enemaApp.controller('enemaController',['$scope','$location','$localStorage','$firebaseAuth','$firebaseObject','$firebaseStorage','$firebaseArray','$routeParams','$window',
-function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseStorage,$firebaseArray,$routeParams,$window){
+enemaApp.controller('enemaController',['$scope','$location','$localStorage','$firebaseAuth','$firebaseObject','$firebaseStorage','$firebaseArray','$routeParams','$window','fileReader',
+function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseStorage,$firebaseArray,$routeParams,$window,fileReader){
     $scope.$lcl = $localStorage;
     $scope.fAuth = $firebaseAuth();
     $scope.fDB = firebase.database();
@@ -12,6 +12,26 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
     $scope.isUploading = false;
     $scope.editCity = {};
     $scope.curCatKey = '';
+    $scope.multiImages = [];
+    $scope.multiImagesSrc = [];
+    $scope.month = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    $scope.days = ['Monday','Tuesday','Wedensday','Thursday','Friday','Saturday','Sunday'];
+    $scope.preDefineCourse = ['Laptop','Pendrive','Camera','Notebook'];
+    $scope.courseTimeSlots = [{
+        slot_date:'21',
+        slot_day:'Tuesday',
+        slot_month:'April',
+        slot_year:'2019',
+        TIME_SLOT:[{
+            time_from:'2 AM',
+            time_to:'4 PM'
+        },
+        {
+            time_from:'5 PM',
+            time_to:'7 PM'
+        }]
+    }];
+    $scope.selectedCourse = [];
     /**Initializing Init Function*********/
     $scope.init = function(){
         if(!$scope.isUserLoggedIn()){
@@ -89,6 +109,15 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
     $scope.getClass = function (path) {
         return ($location.path() === path) ? 'active' : '';
     }
+    $scope.toggleSelection = function toggleSelection(courseRName) {
+        var idx = $scope.selectedCourse.indexOf(courseRName);
+        if (idx > -1) {
+          $scope.selectedCourse.splice(idx, 1);
+        }
+        else {
+          $scope.selectedCourse.push(courseRName);
+        }
+      };
     /********City Page Functions *********/
     $scope.getCityList = function(){
         var cityObject = $scope.fDB.ref('APP_DATA').child('AVAILABLE_LOCATIONS');
@@ -231,6 +260,104 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
             $scope.showNoti(404,error);
         });
     }
+    /****** Courses Functions ******/
+    $scope.getCoursesList = function(){
+        var coursesObject = $scope.fDB.ref('APP_DATA').child('COURSES_DATA');
+        $scope.courseList = $firebaseArray(coursesObject);
+    };
+    $scope.saveCourse = function(){
+        $scope.isLoading = true;
+        var courseObject = $scope.fDB.ref('APP_DATA').child('COURSES_DATA');
+        var coursePredefinedData =[];
+        
+        var f_storageRef = $scope.fStorage.ref("availble_locations_image/"+$scope.mediaFile.name);
+        var f_storage = $firebaseStorage(f_storageRef);
+        var uploadTask = f_storage.$put($scope.mediaFile);
+        uploadTask.$complete(snapshot=>{
+            var imagePath = $scope.fStorage.ref("availble_locations_image/"+$scope.mediaFile.name);
+            $firebaseStorage(imagePath).$getDownloadURL().then(function(url) {
+                var totalCount = ($scope.courseList.length)+1;
+                var courseRequiredData = {};
+                angular.forEach($scope.preDefineCourse,function(value,key){
+                    var isChecked = false;
+                    if($scope.selectedCourse.indexOf(value) !== -1){
+                        isChecked = true;
+                    }
+                    var key = value.toLowerCase();
+                    courseRequiredData[key] = isChecked;
+                });
+                console.log(courseRequiredData);
+                coursePredefinedData = {
+                    course_name:$scope.course_name,
+                    course_city:$scope.course_city,
+                    course_area:$scope.course_location,
+                    course_actual_price:$scope.course_price,
+                    course_discount_price:$scope.course_d_price,
+                    COURSE_REQUIRED:courseRequiredData,
+                    course_image:url,
+                    course_rating:'2.0',
+                    course_id:''+totalCount+'',
+                    course_rating_count:'(2350)',
+                    COURSE_SLOT:$scope.courseTimeSlots,
+                    course_best_seller_status:'1',
+                };
+                console.log(coursePredefinedData);
+                $firebaseArray(courseObject).$add(coursePredefinedData).then(function(ref){
+                    $scope.addedKey = ref.key;
+                });
+                for(var i = 0;i<$scope.multiImages.length;i++){
+                    var f_storageRef = $scope.fStorage.ref("availble_locations_image/"+$scope.multiImages[i].name);
+                    var f_storage = $firebaseStorage(f_storageRef);
+                    var uploadTask = f_storage.$put($scope.multiImages[i]);
+                    uploadTask.$complete(snapshot=>{
+                        var imagePath = $scope.fStorage.ref(snapshot.metadata.fullPath);
+                        $firebaseStorage(imagePath).$getDownloadURL().then(function(url) {
+                            var courseDataGallery =  courseObject.child($scope.addedKey).child('COURSE_GALLERY');
+                            $firebaseArray(courseDataGallery).$add(url);
+                            if(i == ($scope.multiImages.length-1)){
+                                $scope.showNoti(200,'Course Added Successfully');
+                                $scope.isLoading = false;
+                                $scope.mediaFile = [];
+                                $scope.multiImages = [];
+                                $scope.multiImagesSrc = [];
+                                $window.reload();
+                            }
+                        });
+                    });
+                }
+            });
+        });
+        uploadTask.$error(err=>{
+            console.error(err);
+            $scope.isLoading = false;
+        });
+        // 
+    };
+    $scope.deleteCourse = function(key){
+        var catDObject = $scope.fDB.ref('APP_DATA').child('COURSES_DATA').child(key);
+        var obj = $firebaseObject(catDObject);
+        obj.$remove().then(function(ref) {
+            $scope.showNoti(200,"Course Deleted");
+        }, function(error) {
+            console.log("Error:", error);
+            $scope.showNoti(404,error);
+        });
+    };
+    $scope.galleryImage = function(event){
+        for(var i = 0;i<event.target.files.length;i++){
+            $scope.multiImages.push(event.target.files[i]);
+            fileReader.readAsDataUrl(event.target.files[i], $scope).then(function(result) {
+                $scope.multiImagesSrc.push(result);
+            });
+        }
+    };
+    $scope.removeGImage = function(index){
+        $scope.multiImages.splice(index,1);
+        $scope.multiImagesSrc.splice(index,1);
+        if($scope.multiImagesSrc.length < 1){
+            $scope.course_gallery = '';
+        }
+    };
     /****** Route Changes ********/
     $scope.$on('$routeChangeStart',function(scope, next, current){
         $scope.mainLoader = true;
@@ -240,3 +367,11 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
         $scope.mainLoader = false;
     });
 }]);
+enemaApp.directive('addCourseSlot',function(){
+    return{
+        restrict:'A',
+        link:function(scope,elem,attrs){
+
+        }
+    }
+})
