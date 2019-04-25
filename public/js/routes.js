@@ -1,5 +1,5 @@
-enemaApp.config(['$routeProvider',
-  function($routeProvider) {
+enemaApp.config(['$routeProvider','$locationProvider',
+  function($routeProvider,$locationProvider) {
     $routeProvider.
       when("/", {
         templateUrl : "views/dashbaord.html"
@@ -21,10 +21,16 @@ enemaApp.config(['$routeProvider',
       }).
       when('/courses', {
         templateUrl: 'views/courses.html'
+      }).
+      when('/ad', {
+         templateUrl: 'views/ad-list.html'
+      }).
+      when('/settings',{
+        templateUrl: 'views/settings.html'
+      }).
+      when('/coupons',{
+        templateUrl: 'views/coupons.html'
       })
-      // when('/forgot-password-token-check', {
-      //   templateUrl: 'forgot-password-token-check.html'
-      // }).
       // when('/reset-password', {
       //   templateUrl: 'reset-password.html'
       // }).

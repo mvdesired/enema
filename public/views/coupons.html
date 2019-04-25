@@ -1,0 +1,95 @@
+<section class="content" ng-init="$parent.getCouponsList()">
+    <div class="container-fluid">
+        <div class="block-header">
+            <h2>Coupons</h2>
+        </div>
+        <div class="row clearfix">
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                <div class="card">
+                    <div class="header">
+                        <h2>Coupons Add/Edit</h2>
+                    </div>
+                    <div class="body">
+                        <div class="form-group">
+                            <label for="coupon_code">Coupon Code</label>
+                            <div class="form-line">
+                                <input type="text" id="coupon_code" ng-model="$parent.coupon_code"
+                                    class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="coupon_title">Coupon Title</label>
+                            <div class="form-line">
+                                <input type="text" id="coupon_title" ng-model="$parent.coupon_title"
+                                    class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="coupon_desc">Coupon Description</label>
+                            <div class="form-line">
+                                <textarea id="coupon_desc" ng-model="$parent.coupon_desc"
+                                class="form-control"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="coupon_desc">Coupon Type</label>
+                            <div class="form-line">
+                                <select ng-model="$parent.coupon_type" class="form-control">
+                                    <option ng-selected="$parent.coupon_type == 'percent'" value="percent">Precentage</option>
+                                    <option ng-selected="$parent.coupon_type == 'flat'" value="flat">Flat</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="coupon_value">Coupon Value</label>
+                            <div class="form-line">
+                                <input type="number" id="coupon_value" ng-model="$parent.coupon_value"
+                                class="form-control">
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-primary m-t-15 waves-effect"
+                            ng-disabled="$parent.isLoading" ng-click="$parent.coupon()">Save</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                <div class="card">
+                    <div class="header">
+                        <h2>Category List</h2>
+                    </div>
+                    <div class="body table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Code</th>
+                                    <th>Type</th>
+                                    <th>Value</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="cL in $parent.cpnList">
+                                    <td ng-bind="cL.coupon_title"></td>
+                                    <td ng-bind="cL.coupon_code"></td>
+                                    <td ng-bind="cL.coupon_type"></td>
+                                    <td ng-bind="cL.coupon_value"></td>
+                                    <td>
+                                        <button type="button" class="btn btn-primary btn-xs waves-effect"
+                                            ng-click="$parent.editCoupon($parent.cpnKeys[$index])">
+                                            <i class="material-icons">edit</i>
+                                        </button>
+                                        <button type="button" class="btn btn-danger btn-xs waves-effect"
+                                            ng-click="$parent.deleteCoupon($parent.cpnKeys[$index])">
+                                            <i class="material-icons">delete</i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

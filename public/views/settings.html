@@ -1,0 +1,52 @@
+<section class="content" ng-init="$parent.getSettings()">
+    <div class="container-fluid">
+        <div class="block-header">
+            <h2>Settings</h2>
+        </div>
+    </div>
+    <div class="row clearfix">
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+            <div class="card">
+                <div class="header">
+                    <h2>SUPPORT FAQ</h2>
+                </div>
+                <div class="body">
+                    <div class="" ng-repeat="faq in $parent.supportData">
+                        <div class="form-group">
+                            <label>Support Question</label>
+                            <div class="form-line">
+                                <textarea class="form-control" ng-model="$parent.supportData[$index].support_question"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Support Answer</label>
+                            <div class="form-line">
+                                <textarea class="form-control" ng-model="$parent.supportData[$index].support_answer"></textarea>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <button type="button" class="btn btn-primary m-t-15 waves-effect"
+                        ng-disabled="$parent.isLoading" ng-click="$parent.saveSupport()">Save</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+            <div class="card">
+                <div class="header">
+                    <h2>Refer & Earn</h2>
+                </div>
+                <div class="body">
+                    <div class="form-group">
+                        <label>Message</label>
+                        <div class="form-line">
+                            <textarea class="form-control" ng-model="$parent.referMessage"></textarea>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary m-t-15 waves-effect"
+                        ng-disabled="$parent.isLoading" ng-click="$parent.saveRefer()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

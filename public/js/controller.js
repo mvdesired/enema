@@ -1,5 +1,5 @@
-enemaApp.controller('enemaController',['$scope','$location','$localStorage','$firebaseAuth','$firebaseObject','$firebaseStorage','$firebaseArray','$routeParams','$window','fileReader',
-function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseStorage,$firebaseArray,$routeParams,$window,fileReader){
+enemaApp.controller('enemaController',['$scope','$location','$localStorage','$firebaseAuth','$firebaseObject','$firebaseStorage','$firebaseArray','$routeParams','$window','fileReader','$route',
+function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseStorage,$firebaseArray,$routeParams,$window,fileReader,$route){
     $scope.$lcl = $localStorage;
     $scope.fAuth = $firebaseAuth();
     $scope.fDB = firebase.database();
@@ -63,6 +63,11 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
             }
         });
     }
+    $scope.signOut = function(){
+        $scope.fAuth.$signOut();
+        $scope.$lcl.uid = null;
+        $location.path('/login');
+    }
     /******Miscelleneous Functions********/
     $scope.showNoti = function(code,text){
         var className= '';
@@ -117,7 +122,7 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
         else {
           $scope.selectedCourse.push(courseRName);
         }
-      };
+    };
     /********City Page Functions *********/
     $scope.getCityList = function(){
         var cityObject = $scope.fDB.ref('APP_DATA').child('AVAILABLE_LOCATIONS');
@@ -150,7 +155,7 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
                 $scope.showNoti(200,'City Added Successfully');
                 $scope.isLoading = false;
                 $scope.mediaFile = [];
-                $window.reload();
+                $window.location.reload();
               });
         });
         uploadTask.$progress(snapshot=>{
@@ -269,7 +274,6 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
         $scope.isLoading = true;
         var courseObject = $scope.fDB.ref('APP_DATA').child('COURSES_DATA');
         var coursePredefinedData =[];
-        
         var f_storageRef = $scope.fStorage.ref("availble_locations_image/"+$scope.mediaFile.name);
         var f_storage = $firebaseStorage(f_storageRef);
         var uploadTask = f_storage.$put($scope.mediaFile);
@@ -286,44 +290,45 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
                     var key = value.toLowerCase();
                     courseRequiredData[key] = isChecked;
                 });
-                console.log(courseRequiredData);
-                coursePredefinedData = {
-                    course_name:$scope.course_name,
-                    course_city:$scope.course_city,
-                    course_area:$scope.course_location,
-                    course_actual_price:$scope.course_price,
-                    course_discount_price:$scope.course_d_price,
-                    COURSE_REQUIRED:courseRequiredData,
-                    course_image:url,
-                    course_rating:'2.0',
-                    course_id:''+totalCount+'',
-                    course_rating_count:'(2350)',
-                    COURSE_SLOT:$scope.courseTimeSlots,
-                    course_best_seller_status:'1',
-                };
-                console.log(coursePredefinedData);
-                $firebaseArray(courseObject).$add(coursePredefinedData).then(function(ref){
+                var csrObj = $firebaseObject(courseObject.child(''+totalCount+''));
+                csrObj.course_name=$scope.course_name;
+                csrObj.course_city=$scope.course_city;
+                csrObj.course_area=$scope.course_location;
+                csrObj.course_actual_price=$scope.course_price;
+                csrObj.course_discount_price=$scope.course_d_price;
+                csrObj.COURSE_REQUIRED=courseRequiredData;
+                csrObj.course_image=url;
+                csrObj.course_rating='2.0';
+                csrObj.course_id=''+totalCount+'';
+                csrObj.course_rating_count='(2350)';
+                csrObj.COURSE_SLOT=$scope.courseTimeSlots;
+                csrObj.course_best_seller_status='1';
+                csrObj.$save().then(function(ref){
                     $scope.addedKey = ref.key;
                 });
                 for(var i = 0;i<$scope.multiImages.length;i++){
-                    var f_storageRef = $scope.fStorage.ref("availble_locations_image/"+$scope.multiImages[i].name);
-                    var f_storage = $firebaseStorage(f_storageRef);
-                    var uploadTask = f_storage.$put($scope.multiImages[i]);
-                    uploadTask.$complete(snapshot=>{
-                        var imagePath = $scope.fStorage.ref(snapshot.metadata.fullPath);
-                        $firebaseStorage(imagePath).$getDownloadURL().then(function(url) {
-                            var courseDataGallery =  courseObject.child($scope.addedKey).child('COURSE_GALLERY');
-                            $firebaseArray(courseDataGallery).$add(url);
-                            if(i == ($scope.multiImages.length-1)){
-                                $scope.showNoti(200,'Course Added Successfully');
-                                $scope.isLoading = false;
-                                $scope.mediaFile = [];
-                                $scope.multiImages = [];
-                                $scope.multiImagesSrc = [];
-                                $window.reload();
-                            }
+                    (function(k){
+                        var f_storageRef = $scope.fStorage.ref("availble_locations_image/"+$scope.multiImages[k].name);
+                        var f_storage = $firebaseStorage(f_storageRef);
+                        var uploadTask = f_storage.$put($scope.multiImages[k]);
+                        uploadTask.$complete(snapshot=>{
+                            var imagePath = $scope.fStorage.ref(snapshot.metadata.fullPath);
+                            $firebaseStorage(imagePath).$getDownloadURL().then(function(url) {
+                                var courseDataGallery =  courseObject.child($scope.addedKey).child('COURSE_GALLERY');
+                                $firebaseArray(courseDataGallery).$add(url);
+                                console.log(k,($scope.multiImages.length-1));
+                                if(k == ($scope.multiImages.length-1)){
+                                    $scope.showNoti(200,'Course Added Successfully');
+                                    $scope.isLoading = false;
+                                    $scope.mediaFile = [];
+                                    $scope.multiImages = [];
+                                    $scope.multiImagesSrc = [];
+                                    $scope.addedKey = '';
+                                    $window.location.reload();
+                                }
+                            });
                         });
-                    });
+                    })(i);
                 }
             });
         });
@@ -331,17 +336,13 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
             console.error(err);
             $scope.isLoading = false;
         });
-        // 
     };
     $scope.deleteCourse = function(key){
-        var catDObject = $scope.fDB.ref('APP_DATA').child('COURSES_DATA').child(key);
-        var obj = $firebaseObject(catDObject);
-        obj.$remove().then(function(ref) {
+        var confirmThis = confirm("Do you want to delete this course?");
+        if(confirmThis){
             $scope.showNoti(200,"Course Deleted");
-        }, function(error) {
-            console.log("Error:", error);
-            $scope.showNoti(404,error);
-        });
+            $scope.courseList.$remove(key);
+        }
     };
     $scope.galleryImage = function(event){
         for(var i = 0;i<event.target.files.length;i++){
@@ -358,6 +359,43 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
             $scope.course_gallery = '';
         }
     };
+    /****** Ads Functions ******/
+    $scope.getAdsList = function(){
+        var adsObject = $scope.fDB.ref('APP_DATA').child('ADS_DATA');
+        var obj = $firebaseObject(adsObject);
+        obj.$loaded().then(function() {
+            $scope.ad_deals = obj.AD_DEALS;
+            $scope.ad_sliders = obj.AD_SLIDER;
+            $scope.ad_home_screen_ads = obj.HOME_SCREEN_ADS.TOP_SCREEN;
+        });
+    }
+    /****** Settings Functions ******/
+    $scope.getSettings = function(){
+        var supportObject = $scope.fDB.ref('APP_DATA').child('SUPPORT');
+        $scope.supportData = $firebaseArray(supportObject);
+        var referObject = $scope.fDB.ref('APP_DATA').child('REFERANDEARN');
+        var referMessage = $firebaseObject(referObject);
+        referMessage.$loaded().then(function() {
+            $scope.referMessage = referMessage.refer_message;
+        });
+        
+    }
+    /****** Coupons Functions ******/
+    $scope.getCouponsList = function(){
+        var couponbject = $scope.fDB.ref('APP_DATA').child('COUPON_CODES');
+        var obj = $firebaseObject(couponbject);
+        var cpnObj = [];
+        $scope.cpnKeys = [];
+        obj.$loaded().then(function() {
+            // To iterate the key/value pairs of the object, use angular.forEach()
+            angular.forEach(obj, function(value, key) {
+                cpnObj.push(value);
+               $scope.cpnKeys.push(key);
+            });
+        });
+        $scope.cpnList = cpnObj;
+        obj.$bindTo($scope, "cpnList");
+    }
     /****** Route Changes ********/
     $scope.$on('$routeChangeStart',function(scope, next, current){
         $scope.mainLoader = true;
