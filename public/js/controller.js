@@ -319,6 +319,7 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
                 csrObj.course_rating_count=""+Math.floor((Math.random() * 300) + 500)+"";
                 csrObj.COURSE_SLOT=$scope.courseTimeSlots;
                 csrObj.course_best_seller_status='1';
+                csrObj.NOTES = {SLOT_NOTE:$scope.course_slot_note}
                 csrObj.$save().then(function(ref){
                     $scope.addedKey = ref.key;
                 });

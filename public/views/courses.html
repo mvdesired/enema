@@ -37,13 +37,19 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="course_d_price">Dicount Price</label>
+                            <label for="course_d_price">Discount Price</label>
                             <div class="form-line">
                                 <input type="text" id="course_d_price" ng-model="$parent.course_d_price" class="form-control" placeholder="Discount Price">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="course_category">Caourse Category</label>
+                            <label for="course_slot_note">Slot Note</label>
+                            <div class="form-line">
+                                <input type="text" id="course_slot_note" ng-model="$parent.course_slot_note" class="form-control" placeholder="Slot Note">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="course_category">Course Category</label>
                             <div class="form-line">
                                 <select id="course_category" ng-model="$parent.course_category" class="form-control">
                                     <option ng-repeat="ccl in $parent.ccList" value="{{ccl.category_name}}">{{ccl.category_name}}</option>
