@@ -1,10 +1,9 @@
-<section class="content">
+<section class="content" ng-init="$parent.dashboardData()">
     <div class="container-fluid">
         <div class="block-header">
             <h2>DASHBOARD</h2>
         </div>
-
-        <!-- Widgets -->
+        <!-- Widgets 
         <div class="row clearfix">
             <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <div class="info-box bg-pink hover-expand-effect">
@@ -12,8 +11,8 @@
                         <i class="material-icons">playlist_add_check</i>
                     </div>
                     <div class="content">
-                        <div class="text">NEW TASKS</div>
-                        <div class="number count-to" data-from="0" data-to="125" data-speed="15" data-fresh-interval="20"></div>
+                        <div class="text">Canceled Booking</div>
+                        <div class="number count-to" data-from="0" data-to="{{$scope.cancelledBooked}}" data-speed="15" data-fresh-interval="20"></div>
                     </div>
                 </div>
             </div>
@@ -50,7 +49,40 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div>-->
         <!-- #END# Widgets -->
+        <div class="row clearfix">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="card">
+                    <div class="header">
+                        <h2>Cancelled Bookings</h2>
+                    </div>
+                    <div class="body table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Mobile</th>
+                                    <th>Course Name</th>
+                                    <th>Reason</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="bc in $parent.bookingCanel">
+                                    <td ng-bind="bc.user_name"></td>
+                                    <td ng-bind="bc.user_email"></td>
+                                    <td ng-bind="bc.user_mobile"></td>
+                                    <td ng-bind="bc.course_name"></td>
+                                    <td ng-bind="bc.cancel_reason"></td>
+                                    <td ng-bind="bc.cancel_date"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </section>

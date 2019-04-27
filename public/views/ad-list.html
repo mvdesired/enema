@@ -75,48 +75,42 @@
                         <h2>AD Slider</h2>
                     </div>
                     <div class="body">
-                        <div class="" ng-repeat="aS in $parent.ad_sliders">
-                            <div class="form-group">
-                                <label>Ad Body</label>
-                                <div class="form-line">
-                                    <input type="text" class="form-control" value="aS.ad_body" ng-model="$parent.ad_sliders[$index].ad_body" />
-                                </div>
+                        <div class="form-group">
+                            <label>Ad Slider 1 Image</label>
+                            <div class="form-line">
+                                <input type="file" class="form-control" onchange="angular.element(this).scope().changeAdImage(event,0)" accept="image/*"/>
                             </div>
-                            <div class="form-group">
-                                <label>Ad Click Data</label>
-                                <div class="form-line">
-                                    <input type="text" class="form-control" value="aS.ad_click_data" ng-model="$parent.ad_sliders[$index].ad_click_data" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>Ad Cost</label>
-                                <div class="form-line">
-                                    <input type="text" class="form-control" value="aS.ad_cost" ng-model="$parent.ad_sliders[$index].ad_cost" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>Ad Day</label>
-                                <div class="form-line">
-                                    <input type="text" class="form-control" value="aS.ad_day" ng-model="$parent.ad_sliders[$index].ad_day" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>Ad Image</label>
-                                <div class="form-line">
-                                    <input type="file" class="form-control" />
-                                </div>
-                                <div class="list-unstyled row clearfix">
-                                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                                        <div class="ng-thumbnails">
-                                            <img class="img-responsive thumbnail" ng-src="{{$parent.ad_sliders[$index].ad_image}}">
-                                        </div>
+                            <div class="list-unstyled row clearfix">
+                                <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                                    <div class="ng-thumbnails">
+                                        <img class="img-responsive thumbnail" ng-src="{{$parent.ad_sliders[0].ad_image}}">
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label>Ad Punch Line</label>
-                                <div class="form-line">
-                                    <input type="text" class="form-control" value="aS.ad_punch_line" ng-model="$parent.ad_sliders[$index].ad_punch_line" />
+                        </div>
+                        <div class="form-group">
+                            <label>Ad Slider 2 Image</label>
+                            <div class="form-line">
+                                <input type="file" class="form-control" onchange="angular.element(this).scope().changeAdImage(event,1)" accept="image/*"/>
+                            </div>
+                            <div class="list-unstyled row clearfix">
+                                <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                                    <div class="ng-thumbnails">
+                                        <img class="img-responsive thumbnail" ng-src="{{$parent.ad_sliders[1].ad_image}}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Ad Slider 3 Image</label>
+                            <div class="form-line">
+                                <input type="file" class="form-control" onchange="angular.element(this).scope().changeAdImage(event,2)" accept="image/*"/>
+                            </div>
+                            <div class="list-unstyled row clearfix">
+                                <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                                    <div class="ng-thumbnails">
+                                        <img class="img-responsive thumbnail" ng-src="{{$parent.ad_sliders[2].ad_image}}">
+                                    </div>
                                 </div>
                             </div>
                         </div>

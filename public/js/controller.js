@@ -32,6 +32,8 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
         }]
     }];
     $scope.selectedCourse = [];
+    $scope.adMediaFile = [];
+    $scope.cancelledBooked = 0;
     /**Initializing Init Function*********/
     $scope.init = function(){
         if(!$scope.isUserLoggedIn()){
@@ -67,6 +69,15 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
         $scope.fAuth.$signOut();
         $scope.$lcl.uid = null;
         $location.path('/login');
+    }
+    /******Dahsboard Functions********/
+    $scope.dashboardData = function(){
+        var bookingObject = $scope.fDB.ref('APP_DATA').child('BOOKINGS_CANCEL');
+        var obj = $firebaseObject(bookingObject);
+        obj.$loaded().then(function() {
+            $scope.bookingCanel = obj;
+            console.log($scope.bookingCanel);
+        });
     }
     /******Miscelleneous Functions********/
     $scope.showNoti = function(code,text){
@@ -269,6 +280,8 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
     $scope.getCoursesList = function(){
         var coursesObject = $scope.fDB.ref('APP_DATA').child('COURSES_DATA');
         $scope.courseList = $firebaseArray(coursesObject);
+        var categoryObject = $scope.fDB.ref('APP_DATA').child('CATEGORIES_DATA');
+        $scope.ccList = $firebaseArray(categoryObject);
     };
     $scope.saveCourse = function(){
         $scope.isLoading = true;
@@ -296,6 +309,7 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
                 csrObj.course_area=$scope.course_location;
                 csrObj.course_actual_price=$scope.course_price;
                 csrObj.course_discount_price=$scope.course_d_price;
+                csrObj.course_category = $scope.course_category;
                 csrObj.COURSE_REQUIRED=courseRequiredData;
                 csrObj.course_image=url;
                 csrObj.course_rating='2.0';
@@ -368,6 +382,37 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
             $scope.ad_sliders = obj.AD_SLIDER;
             $scope.ad_home_screen_ads = obj.HOME_SCREEN_ADS.TOP_SCREEN;
         });
+    }
+    $scope.saveAdSlider = function(){
+        $scope.isLoading = true;
+        console.log($scope.adMediaFile.length,$scope.adMediaFile);
+        for(var i = 0;i<$scope.adMediaFile.length;i++){
+            if($scope.adMediaFile[i]){
+                (function(k){
+                    var f_storageRef = $scope.fStorage.ref("availble_locations_image/"+$scope.adMediaFile[k].name);
+                    var f_storage = $firebaseStorage(f_storageRef);
+                    var uploadTask = f_storage.$put($scope.adMediaFile[k]);
+                    uploadTask.$complete(snapshot=>{
+                        var imagePath = $scope.fStorage.ref(snapshot.metadata.fullPath);
+                        $firebaseStorage(imagePath).$getDownloadURL().then(function(url) {
+                            var catDObject = $scope.fDB.ref('APP_DATA').child('ADS_DATA').child('AD_SLIDER').child(k);
+                            var obj = $firebaseObject(catDObject);
+                            obj.ad_image = url;
+                            obj.$save().then((res)=>{
+                            });
+                            if(k == ($scope.adMediaFile.length-1)){
+                                $scope.showNoti(200,'Ad Slider updated Successfully');
+                                $scope.isLoading = false;
+                                $window.location.reload();
+                            }
+                        });
+                    });
+                })(i);
+            }
+        }
+    }
+    $scope.changeAdImage = function(event,index){
+        $scope.adMediaFile[index] = event.target.files[0];
     }
     /****** Settings Functions ******/
     $scope.getSettings = function(){

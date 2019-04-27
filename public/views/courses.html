@@ -41,6 +41,14 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label for="course_category">Caourse Category</label>
+                            <div class="form-line">
+                                <select id="course_category" ng-model="$parent.course_category" class="form-control">
+                                    <option ng-repeat="ccl in $parent.ccList" value="{{ccl.category_name}}">{{ccl.category_name}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label>Course Requirement</label>
                             <div class="form-group">
                                 <span ng-repeat="pdC in $parent.preDefineCourse">
