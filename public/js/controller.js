@@ -282,6 +282,8 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
         $scope.courseList = $firebaseArray(coursesObject);
         var categoryObject = $scope.fDB.ref('APP_DATA').child('CATEGORIES_DATA');
         $scope.ccList = $firebaseArray(categoryObject);
+        var cityObject = $scope.fDB.ref('APP_DATA').child('AVAILABLE_LOCATIONS');
+        $scope.CourseCityList = $firebaseArray(cityObject);
     };
     $scope.saveCourse = function(){
         $scope.isLoading = true;
@@ -312,9 +314,9 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
                 csrObj.course_category = $scope.course_category;
                 csrObj.COURSE_REQUIRED=courseRequiredData;
                 csrObj.course_image=url;
-                csrObj.course_rating='2.0';
+                csrObj.course_rating='4.5';
                 csrObj.course_id=''+totalCount+'';
-                csrObj.course_rating_count='(2350)';
+                csrObj.course_rating_count=Math.floor((Math.random() * 300) + 500);
                 csrObj.COURSE_SLOT=$scope.courseTimeSlots;
                 csrObj.course_best_seller_status='1';
                 csrObj.$save().then(function(ref){

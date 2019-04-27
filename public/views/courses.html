@@ -19,7 +19,9 @@
                         <div class="form-group">
                             <label for="course_city">City</label>
                             <div class="form-line">
-                                <input type="text" id="course_city" ng-model="$parent.course_city" class="form-control" placeholder="Course City">
+                                <select id="course_city" ng-model="$parent.course_city" class="form-control">
+                                    <option ng-repeat="cocyl in $parent.CourseCityList" value="{{cocyl.location_name}}">{{cocyl.location_name}}</option>
+                                </select>
                             </div>
                         </div>
                         <div class="form-group">
