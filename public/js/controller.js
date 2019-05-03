@@ -24,11 +24,13 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
         slot_year:'2019',
         TIME_SLOT:[{
             time_from:'2 AM',
-            time_to:'4 PM'
+            time_to:'4 PM',
+            time_slot_limit:"5"
         },
         {
             time_from:'5 PM',
-            time_to:'7 PM'
+            time_to:'7 PM',
+            time_slot_limit:"3"
         }]
     }];
     $scope.selectedCourse = [];

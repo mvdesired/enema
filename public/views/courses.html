@@ -134,7 +134,7 @@
                             </div>
                             <div class="course_time_slots">
                                 <div class="form-group" ng-repeat="TS in cTS.TIME_SLOT">
-                                    <div class="col-sm-5">
+                                    <div class="col-sm-3">
                                         <label>Time From</label>
                                         <div class="form-line">
                                             <select class="form-control" ng-model="TS.time_from">
@@ -143,7 +143,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-sm-5">
+                                    <div class="col-sm-3">
                                         <label>Time To</label>
                                         <div class="form-line">
                                             <select class="form-control" ng-model="TS.time_to">
@@ -152,7 +152,13 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-sm-2">
+                                    <div class="col-sm-3">
+                                        <label>Slot Limit</label>
+                                        <div class="form-line">
+                                            <input type="number" ng-model="TS.time_slot_limit" value="{{TS.time_slot_limit}}" class="form-control"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
                                         <span class="">
                                             <i class="material-icons">add_box</i>
                                         </span>
