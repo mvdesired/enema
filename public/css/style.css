@@ -8278,3 +8278,7 @@ html.ie11 .bs-searchbox .form-control {
   color: #26a69a;
   cursor: pointer;
 }
+.removeTimeSlot{
+  cursor: pointer;
+  color: #26a69a;
+}

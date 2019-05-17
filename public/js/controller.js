@@ -26,16 +26,16 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
             time_from:'2 AM',
             time_to:'4 PM',
             time_slot_limit:"5"
-        },
-        {
-            time_from:'5 PM',
-            time_to:'7 PM',
-            time_slot_limit:"3"
         }]
     }];
-    $scope.selectedCourse = [];
+    $scope.reqImageArray={};
+    $scope.selectedCourse = [{
+        req_image:'',
+        req_name:''
+    }];
     $scope.adMediaFile = [];
     $scope.cancelledBooked = 0;
+    $scope.bknList = [];
     /**Initializing Init Function*********/
     $scope.init = function(){
         if(!$scope.isUserLoggedIn()){
@@ -78,7 +78,6 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
         var obj = $firebaseObject(bookingObject);
         obj.$loaded().then(function() {
             $scope.bookingCanel = obj;
-            console.log($scope.bookingCanel);
         });
     }
     /******Miscelleneous Functions********/
@@ -234,7 +233,6 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
         obj.$bindTo($scope, "catList");
     }
     $scope.editCat = function(key){
-        console.log(key);
         var catDObject = $scope.fDB.ref('APP_DATA').child('CATEGORIES_DATA').child(key);
         var obj = $firebaseArray(catDObject);
         obj.$loaded().then(function() {
@@ -287,74 +285,151 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
         var cityObject = $scope.fDB.ref('APP_DATA').child('AVAILABLE_LOCATIONS');
         $scope.CourseCityList = $firebaseArray(cityObject);
     };
+    $scope.addTimeSlot = function(index){
+        index.TIME_SLOT.push({
+            time_from:'2 AM',
+            time_to:'4 PM',
+            time_slot_limit:"5"
+        });
+    };
+    $scope.addFullSlot = function(){
+        $scope.courseTimeSlots.push({
+            slot_date:'21',
+            slot_day:'Tuesday',
+            slot_month:'April',
+            slot_year:'2019',
+            TIME_SLOT:[{
+                time_from:'2 AM',
+                time_to:'4 PM',
+                time_slot_limit:"5"
+            }]
+        });
+    };
+    $scope.addRequirment = function(){
+        $scope.selectedCourse.push({
+            req_image:'',
+            req_name:''
+        });
+    }
+    $scope.removeRequirment = function(index){
+        $scope.selectedCourse.splice(index,1);
+    }
+    $scope.removeTimeSlot = function(cts,index){
+        cts.TIME_SLOT.splice(index,1);
+    }
+    $scope.removeFullSlot = function(index){
+        $scope.courseTimeSlots.splice(index,1);
+    }
+    $scope.editCourse = function(key){
+        $scope.course_name = key.course_name;
+        $scope.course_city = key.course_city;
+        $scope.course_location = key.course_location;
+        $scope.workshop_dec = key.course_desc;
+        $scope.course_price = key.course_actual_price;
+        $scope.course_d_price = key.course_discount_price;
+        $scope.course_slot_note = key.NOTES.SLOT_NOTE;
+        $scope.course_category = key.course_category;
+        $scope.courseTimeSlots = key.COURSE_SLOT;
+        $scope.selectedCourse = key.COURSE_REQUIRED;
+        $scope.worksop_rating = key.course_rating;
+        $scope.course_id = key.course_id;
+        $scope.rating_count = key.course_rating_count;
+        $scope.course_best_seller_status = key.course_best_seller_status;
+        $scope.currentKeyEditing = key;
+    }
     $scope.saveCourse = function(){
         $scope.isLoading = true;
-        var courseObject = $scope.fDB.ref('APP_DATA').child('COURSES_DATA');
-        var coursePredefinedData =[];
-        var f_storageRef = $scope.fStorage.ref("availble_locations_image/"+$scope.mediaFile.name);
-        var f_storage = $firebaseStorage(f_storageRef);
-        var uploadTask = f_storage.$put($scope.mediaFile);
-        uploadTask.$complete(snapshot=>{
-            var imagePath = $scope.fStorage.ref("availble_locations_image/"+$scope.mediaFile.name);
-            $firebaseStorage(imagePath).$getDownloadURL().then(function(url) {
-                var totalCount = ($scope.courseList.length)+1;
-                var courseRequiredData = {};
-                angular.forEach($scope.preDefineCourse,function(value,key){
-                    var isChecked = false;
-                    if($scope.selectedCourse.indexOf(value) !== -1){
-                        isChecked = true;
-                    }
-                    var key = value.toLowerCase();
-                    courseRequiredData[key] = isChecked;
-                });
-                var csrObj = $firebaseObject(courseObject.child(''+totalCount+''));
-                csrObj.course_name=$scope.course_name;
-                csrObj.course_city=$scope.course_city;
-                csrObj.course_area=$scope.course_location;
-                csrObj.course_actual_price=$scope.course_price;
-                csrObj.course_discount_price=$scope.course_d_price;
-                csrObj.course_category = $scope.course_category;
-                csrObj.COURSE_REQUIRED=courseRequiredData;
-                csrObj.course_image=url;
-                csrObj.course_rating='4.5';
-                csrObj.course_id=''+totalCount+'';
-                csrObj.course_rating_count=""+Math.floor((Math.random() * 300) + 500)+"";
-                csrObj.COURSE_SLOT=$scope.courseTimeSlots;
-                csrObj.course_best_seller_status='1';
-                csrObj.NOTES = {SLOT_NOTE:$scope.course_slot_note}
-                csrObj.$save().then(function(ref){
-                    $scope.addedKey = ref.key;
-                });
-                for(var i = 0;i<$scope.multiImages.length;i++){
-                    (function(k){
-                        var f_storageRef = $scope.fStorage.ref("availble_locations_image/"+$scope.multiImages[k].name);
-                        var f_storage = $firebaseStorage(f_storageRef);
-                        var uploadTask = f_storage.$put($scope.multiImages[k]);
-                        uploadTask.$complete(snapshot=>{
-                            var imagePath = $scope.fStorage.ref(snapshot.metadata.fullPath);
-                            $firebaseStorage(imagePath).$getDownloadURL().then(function(url) {
-                                var courseDataGallery =  courseObject.child($scope.addedKey).child('COURSE_GALLERY');
-                                $firebaseArray(courseDataGallery).$add(url);
-                                console.log(k,($scope.multiImages.length-1));
-                                if(k == ($scope.multiImages.length-1)){
-                                    $scope.showNoti(200,'Course Added Successfully');
-                                    $scope.isLoading = false;
-                                    $scope.mediaFile = [];
-                                    $scope.multiImages = [];
-                                    $scope.multiImagesSrc = [];
-                                    $scope.addedKey = '';
-                                    $window.location.reload();
-                                }
-                            });
-                        });
-                    })(i);
+        if($scope.currentKeyEditing){
+            var WSObject = $scope.fDB.ref('APP_DATA').child('COURSES_DATA').child($scope.currentKeyEditing);
+            var obj = $firebaseObject(WSObject);
+            obj.course_name=$scope.course_name;
+            obj.course_city=$scope.course_city;
+            obj.course_desc=$scope.workshop_dec;
+            obj.course_area=$scope.course_location;
+            obj.course_actual_price=$scope.course_price;
+            obj.course_discount_price=$scope.course_d_price;
+            obj.course_category = $scope.course_category;
+            obj.COURSE_REQUIRED=courseRequiredData;
+            obj.course_image=url;
+            obj.course_rating=$scope.worksop_rating;
+            obj.course_id=$scope.course_id;
+            obj.course_rating_count=$scope.rating_count;
+            obj.COURSE_SLOT=$scope.courseTimeSlots;
+            obj.course_best_seller_status=$scope.course_best_seller_status;
+            obj.NOTES = {SLOT_NOTE:$scope.course_slot_note}
+            obj.$save().then(function(ref) {
+                $scope.showNoti(200,"Workshop Updated");
+                $scope.isLoading = false;
+                if($scope.reqImageArray.length>0){
+
                 }
+                //$location.reload();
+                ref.key === obj.$id; // true
+            }, function(error) {
+                $scope.showNoti(404,error);
             });
-        });
-        uploadTask.$error(err=>{
-            console.error(err);
-            $scope.isLoading = false;
-        });
+        }
+        else{
+            var courseObject = $scope.fDB.ref('APP_DATA').child('COURSES_DATA');
+            var coursePredefinedData =[];
+            var f_storageRef = $scope.fStorage.ref("availble_locations_image/"+$scope.mediaFile.name);
+            var f_storage = $firebaseStorage(f_storageRef);
+            var uploadTask = f_storage.$put($scope.mediaFile);
+            uploadTask.$complete(snapshot=>{
+                var imagePath = $scope.fStorage.ref("availble_locations_image/"+$scope.mediaFile.name);
+                $firebaseStorage(imagePath).$getDownloadURL().then(function(url) {
+                    var totalCount = ($scope.courseList.length)+1;
+                    var courseRequiredData = $scope.selectedCourse;
+                    var csrObj = $firebaseObject(courseObject.child(''+totalCount+''));
+                    csrObj.course_name=$scope.course_name;
+                    csrObj.course_city=$scope.course_city;
+                    csrObj.course_desc=$scope.workshop_dec;
+                    csrObj.course_area=$scope.course_location;
+                    csrObj.course_actual_price=$scope.course_price;
+                    csrObj.course_discount_price=$scope.course_d_price;
+                    csrObj.course_category = $scope.course_category;
+                    csrObj.COURSE_REQUIRED=courseRequiredData;
+                    csrObj.course_image=url;
+                    csrObj.course_rating='4.5';
+                    csrObj.course_id=''+totalCount+'';
+                    csrObj.course_rating_count=""+Math.floor((Math.random() * 300) + 500)+"";
+                    csrObj.COURSE_SLOT=$scope.courseTimeSlots;
+                    csrObj.course_best_seller_status='1';
+                    csrObj.NOTES = {SLOT_NOTE:$scope.course_slot_note}
+                    csrObj.$save().then(function(ref){
+                        $scope.addedKey = ref.key;
+                    });
+                    for(var i = 0;i<$scope.multiImages.length;i++){
+                        (function(k){
+                            var f_storageRef = $scope.fStorage.ref("availble_locations_image/"+$scope.multiImages[k].name);
+                            var f_storage = $firebaseStorage(f_storageRef);
+                            var uploadTask = f_storage.$put($scope.multiImages[k]);
+                            uploadTask.$complete(snapshot=>{
+                                var imagePath = $scope.fStorage.ref(snapshot.metadata.fullPath);
+                                $firebaseStorage(imagePath).$getDownloadURL().then(function(url) {
+                                    var courseDataGallery =  courseObject.child($scope.addedKey).child('COURSE_GALLERY');
+                                    $firebaseArray(courseDataGallery).$add(url);
+                                    if(k == ($scope.multiImages.length-1)){
+                                        $scope.showNoti(200,'Course Added Successfully');
+                                        $scope.isLoading = false;
+                                        $scope.mediaFile = [];
+                                        $scope.multiImages = [];
+                                        $scope.multiImagesSrc = [];
+                                        $scope.addedKey = '';
+                                        $window.location.reload();
+                                    }
+                                });
+                            });
+                        })(i);
+                    }
+                });
+            });
+            uploadTask.$error(err=>{
+                console.error(err);
+                $scope.isLoading = false;
+            });
+        }
+        
     };
     $scope.deleteCourse = function(key){
         var confirmThis = confirm("Do you want to delete this course?");
@@ -390,7 +465,6 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
     }
     $scope.saveAdSlider = function(){
         $scope.isLoading = true;
-        console.log($scope.adMediaFile.length,$scope.adMediaFile);
         for(var i = 0;i<$scope.adMediaFile.length;i++){
             if($scope.adMediaFile[i]){
                 (function(k){
@@ -446,6 +520,44 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
         $scope.cpnList = cpnObj;
         obj.$bindTo($scope, "cpnList");
     }
+    /****** Coupons Functions ******/
+    $scope.getBookingList = function(){
+        var bookingObject = $scope.fDB.ref('USER_DATA').child('USERS_BOOKINGS');
+        bookingObject.equalTo("cancelled").once("value", function(snapshot) {
+            console.log(snapshot);
+        });
+        var obj = $firebaseObject(bookingObject);
+        var bknObj = [];
+        $scope.bknKeys = [];
+        
+        obj.$loaded().then(function() {
+            // To iterate the key/value pairs of the object, use angular.forEach()
+            angular.forEach(obj, function(value, key) {
+                var userDataArray = $scope.fDB.ref('USER_DATA').child('USER_PROFILE').child(key);
+                var userData = $firebaseObject(userDataArray);
+                userData.$loaded().then(function() {
+                    angular.forEach(value,function(v,k){
+                        $scope.bknKeys.push(key);
+                        $scope.bknList.push({
+                            booking_course_name:v.booking_course_name,
+                            booking_image:v.booking_image,
+                            booking_course_location:v.booking_course_location,
+                            booking_for:v.booking_for,
+                            booking_rating:v.booking_rating,
+                            booking_daydate:v.booking_daydate,
+                            booking_time:v.booking_time,
+                            course_fee:v.course_fee,
+                            booking_status:v.booking_status,
+                            uname:userData.full_name
+                        });
+                    });
+                });
+            });
+            //$scope.bknList = bknObj;
+        });
+        
+        //obj.$bindTo($scope, "bknList");
+    }
     /****** Route Changes ********/
     $scope.$on('$routeChangeStart',function(scope, next, current){
         $scope.mainLoader = true;
@@ -455,11 +567,3 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
         $scope.mainLoader = false;
     });
 }]);
-enemaApp.directive('addCourseSlot',function(){
-    return{
-        restrict:'A',
-        link:function(scope,elem,attrs){
-
-        }
-    }
-})

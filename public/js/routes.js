@@ -19,8 +19,11 @@ enemaApp.config(['$routeProvider','$locationProvider',
       when('/categories', {
         templateUrl: 'views/categories.html'
       }).
-      when('/courses', {
-        templateUrl: 'views/courses.html'
+      when('/workshop', {
+        templateUrl: 'views/workshop.html'
+      }).
+      when('/bookings', {
+        templateUrl: 'views/bookings.html'
       }).
       when('/ad', {
          templateUrl: 'views/ad-list.html'

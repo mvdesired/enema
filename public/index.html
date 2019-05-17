@@ -9,6 +9,7 @@
         type="text/css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
     <link href="/css/bootstrap.css" rel="stylesheet">
+    <link href="/css/dataTables.bootstrap.min.css" rel="stylesheet">
     <link href="/css/animate.css" rel="stylesheet" />
     <link href="/css/waves.css" rel="stylesheet" />
     <link href="/css/style.css" rel="stylesheet">
@@ -26,11 +27,20 @@
     <script defer src="/js/jquery.js"></script>
     <script defer src="/js/bootstrap.js"></script>
     <script defer src="/js/bootstrap-notify.js"></script>
+    <script defer src="/js/jquery.dataTables.js"></script>
+    <script defer src="/js/dataTables.bootstrap.min.js"></script>
     <script defer src="/js/waves.js"></script>
     <script defer src="/js/angular.js"></script>
     <script defer src="/js/angularfire.js"></script>
     <script defer src="/js/angular-route.js"></script>
     <script defer src="/js/angular-sanitize.min.js"></script>
+    <script defer src="/js/angular-datatables.js"></script>
+    <script defer src="/js/angular-datatables.directive.js"></script>
+    <script defer src="/js/angular-datatables.instances.js"></script>
+    <script defer src="/js/angular-datatables.factory.js"></script>
+    <script defer src="/js/angular-datatables.util.js"></script>
+    <script defer src="/js/angular-datatables.options.js"></script>
+    <script defer src="/js/angular-datatables.renderer.js"></script>
     <script defer src="/js/storage.js"></script>
     <script defer src="/js/slimscroll.js"></script>
     <script defer src="/js/scripts.js"></script>
@@ -93,7 +103,7 @@
                         </li>
                         <li ng-class="getClass('/cities')">
                             <a href="#!cities">
-                                <i class="material-icons">border_horizontal</i>
+                                <i class="material-icons">business</i>
                                 <span>City</span>
                             </a>
                         </li>
@@ -103,10 +113,16 @@
                                 <span>Categories</span>
                             </a>
                         </li>
-                        <li ng-class="getClass('/courses')">
-                            <a href="#!courses">
+                        <li ng-class="getClass('/workshop')">
+                            <a href="#!workshop">
                                 <i class="material-icons">assignment</i>
-                                <span>Courses</span>
+                                <span>Workshop</span>
+                            </a>
+                        </li>
+                        <li ng-class="getClass('/bookings')">
+                            <a href="#!bookings">
+                                <i class="material-icons">shopping_cart</i>
+                                <span>Bookings</span>
                             </a>
                         </li>
                         <li ng-class="getClass('/ad')">
@@ -117,13 +133,13 @@
                         </li>
                         <li ng-class="getClass('/coupons')">
                             <a href="#!coupons">
-                                <i class="material-icons">assignment</i>
+                                <i class="material-icons">bookmark_border</i>
                                 <span>Coupons</span>
                             </a>
                         </li>
                         <li ng-class="getClass('/settings')">
                             <a href="#!settings">
-                                <i class="material-icons">assignment</i>
+                                <i class="material-icons">settings</i>
                                 <span>Settings</span>
                             </a>
                         </li>

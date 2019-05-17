@@ -1,0 +1,54 @@
+<section class="content" ng-init="$parent.getBookingList()">
+    <div class="container-fluid">
+        <div class="block-header">
+            <h2>Booking List</h2>
+        </div>
+        <!-- Bordered Table -->
+        <div class="row clearfix">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="card">
+                    <div class="body table-responsive">
+                        <table class="table table-bordered" datatable="ng">
+                            <thead>
+                                <tr>
+                                    <th>User Name</th>
+                                    <th>Workshop</th>
+                                    <!-- <th>Image</th> -->
+                                    <th>Location</th>
+                                    <th>Booked for</th>
+                                    <th>Rating</th>
+                                    <th>Day</th>
+                                    <th>Time</th>
+                                    <th>Fee</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="bl in $parent.bknList">
+                                    <td ng-bind="bl.uname"></td>
+                                    <td ng-bind="bl.booking_course_name"></td>
+                                    <!-- <td>
+                                        <img ng-src="{{bl.booking_image}}" height="50" />
+                                    </td> -->
+                                    <td ng-bind="bl.booking_course_location"></td>
+                                    <td ng-bind="bl.booking_for"></td>
+                                    <td ng-bind="bl.booking_rating"></td>
+                                    <td ng-bind="bl.booking_daydate"></td>
+                                    <td ng-bind="bl.booking_time"></td>
+                                    <td ng-bind="bl.course_fee"></td>
+                                    <td ng-bind="bl.booking_status"></td>
+                                    <!-- <td>
+                                        <a ng-href="#!/booking-view/{{$parent.bknKeys[$index]}}" class="btn btn-primary btn-sm waves-effect">
+                                            <i class="material-icons">View </i>
+                                        </a>
+                                    </td> -->
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- #END# Bordered Table -->
+    </div>
+</section>
