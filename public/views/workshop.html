@@ -65,7 +65,7 @@
                         <div class="form-group">
                             <label>Workshop Requirement</label>
                             <div class="form-group">
-                                <div class="" ng-repeat="sc in $parent.selectedCourse">
+                                <div class="Workshop-requirements-item" ng-repeat="sc in $parent.selectedCourse">
                                     <div class="col-sm-5">
                                         <div class="form-line">
                                             <input type="text" placeholder="name" class="form-control" ng-model="sc.req_name"/>
@@ -73,7 +73,7 @@
                                     </div>
                                     <div class="col-sm-5">
                                         <div class="form-line">
-                                            <input type="file" class="form-control" ng-model="sc.req_image"/>
+                                            <input type="file" class="form-control" onchange="angular.element(this).scope().saveReqImage(event,angular.element(this).scope().$index)" accept="image/*" />
                                         </div>
                                         <div class="form-group">
                                             <div class="list-unstyled row clearfix">

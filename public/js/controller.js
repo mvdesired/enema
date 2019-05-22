@@ -28,14 +28,16 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
             time_slot_limit:"5"
         }]
     }];
-    $scope.reqImageArray={};
+    $scope.reqImageArray=[];
     $scope.selectedCourse = [{
         req_image:'',
-        req_name:''
+        req_name:'',
     }];
     $scope.adMediaFile = [];
     $scope.cancelledBooked = 0;
     $scope.bknList = [];
+    $scope.bknCList = [];
+    $scope.bknBList = [];
     /**Initializing Init Function*********/
     $scope.init = function(){
         if(!$scope.isUserLoggedIn()){
@@ -388,7 +390,7 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
                     csrObj.course_actual_price=$scope.course_price;
                     csrObj.course_discount_price=$scope.course_d_price;
                     csrObj.course_category = $scope.course_category;
-                    csrObj.COURSE_REQUIRED=courseRequiredData;
+                    csrObj.COURSE_REQUIRED='';//courseRequiredData;
                     csrObj.course_image=url;
                     csrObj.course_rating='4.5';
                     csrObj.course_id=''+totalCount+'';
@@ -410,13 +412,39 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
                                     var courseDataGallery =  courseObject.child($scope.addedKey).child('COURSE_GALLERY');
                                     $firebaseArray(courseDataGallery).$add(url);
                                     if(k == ($scope.multiImages.length-1)){
-                                        $scope.showNoti(200,'Course Added Successfully');
-                                        $scope.isLoading = false;
-                                        $scope.mediaFile = [];
-                                        $scope.multiImages = [];
-                                        $scope.multiImagesSrc = [];
-                                        $scope.addedKey = '';
-                                        $window.location.reload();
+                                        for(var j = 0;j<$scope.reqImageArray.length;j++){
+                                            (function(m){
+                                                var f_storageRef = $scope.fStorage.ref("availble_locations_image/"+$scope.reqImageArray[m].name);
+                                                var f_storage = $firebaseStorage(f_storageRef);
+                                                var uploadTask = f_storage.$put($scope.reqImageArray[m]);
+                                                uploadTask.$complete(snapshot=>{
+                                                    var imagePath = $scope.fStorage.ref(snapshot.metadata.fullPath);
+                                                    $firebaseStorage(imagePath).$getDownloadURL().then(function(url) {
+                                                        $scope.selectedCourse[m].req_image = url;
+                                                        delete $scope.selectedCourse[m].$$hashKey;
+                                                        var courseDataGallery =  courseObject.child($scope.addedKey).child('COURSE_REQUIRED');
+                                                        $firebaseArray(courseDataGallery).$add({
+                                                            req_name:$scope.selectedCourse[m].req_name,
+                                                            req_image:url
+                                                        });
+                                                        if(m == ($scope.reqImageArray.length-1)){
+                                                            $scope.showNoti(200,'Course Added Successfully');
+                                                            $scope.isLoading = false;
+                                                            $scope.mediaFile = [];
+                                                            $scope.multiImages = [];
+                                                            $scope.multiImagesSrc = [];
+                                                            $scope.reqImageArray = [];
+                                                            $scope.addedKey = '';
+                                                            $scope.selectedCourse = [{
+                                                                req_image:'',
+                                                                req_name:'',
+                                                            }];
+                                                            $window.location.reload();
+                                                        }
+                                                    });
+                                                });
+                                            })(j);
+                                        }
                                     }
                                 });
                             });
@@ -446,6 +474,9 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
             });
         }
     };
+    $scope.saveReqImage = function(event,index){
+        $scope.reqImageArray[index] = event.target.files[0];
+    }
     $scope.removeGImage = function(index){
         $scope.multiImages.splice(index,1);
         $scope.multiImagesSrc.splice(index,1);
@@ -523,8 +554,13 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
     /****** Coupons Functions ******/
     $scope.getBookingList = function(){
         var bookingObject = $scope.fDB.ref('USER_DATA').child('USERS_BOOKINGS');
-        bookingObject.equalTo("cancelled").once("value", function(snapshot) {
-            console.log(snapshot);
+        var bOBj = bookingObject.orderByChild("booking_status").equalTo("cancelled").once("value", function(dataSnapshot){
+            var series = dataSnapshot.val();
+            if(series){
+              console.log("Found", series);
+            } else {
+              console.warn("Not found.");
+            }
         });
         var obj = $firebaseObject(bookingObject);
         var bknObj = [];
@@ -537,19 +573,50 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
                 var userData = $firebaseObject(userDataArray);
                 userData.$loaded().then(function() {
                     angular.forEach(value,function(v,k){
+                        if(v.booking_status == 'cancelled'){
+                            $scope.bknCList.push({
+                                booking_course_name:v.booking_course_name,
+                                booking_image:v.booking_image,
+                                booking_course_location:v.booking_course_location,
+                                booking_for:v.booking_for,
+                                booking_rating:v.booking_rating,
+                                booking_daydate:v.booking_daydate,
+                                booking_time:v.booking_time,
+                                course_fee:v.course_fee,
+                                booking_status:v.booking_status,
+                                uname:userData.full_name
+                            });
+                        }
+                        else if(v.booking_status == 'booked'){
+                            $scope.bknBList.push({
+                                booking_course_name:v.booking_course_name,
+                                booking_image:v.booking_image,
+                                booking_course_location:v.booking_course_location,
+                                booking_for:v.booking_for,
+                                booking_rating:v.booking_rating,
+                                booking_daydate:v.booking_daydate,
+                                booking_time:v.booking_time,
+                                course_fee:v.course_fee,
+                                booking_status:v.booking_status,
+                                uname:userData.full_name
+                            });
+                        }
+                        else{
+                            $scope.bknList.push({
+                                booking_course_name:v.booking_course_name,
+                                booking_image:v.booking_image,
+                                booking_course_location:v.booking_course_location,
+                                booking_for:v.booking_for,
+                                booking_rating:v.booking_rating,
+                                booking_daydate:v.booking_daydate,
+                                booking_time:v.booking_time,
+                                course_fee:v.course_fee,
+                                booking_status:v.booking_status,
+                                uname:userData.full_name
+                            });
+                        }
                         $scope.bknKeys.push(key);
-                        $scope.bknList.push({
-                            booking_course_name:v.booking_course_name,
-                            booking_image:v.booking_image,
-                            booking_course_location:v.booking_course_location,
-                            booking_for:v.booking_for,
-                            booking_rating:v.booking_rating,
-                            booking_daydate:v.booking_daydate,
-                            booking_time:v.booking_time,
-                            course_fee:v.course_fee,
-                            booking_status:v.booking_status,
-                            uname:userData.full_name
-                        });
+                        
                     });
                 });
             });

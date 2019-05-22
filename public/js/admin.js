@@ -467,3 +467,11 @@ $(function () {
 
     setTimeout(function () { $('.page-loader-wrapper').fadeOut(); }, 50);
 });
+jQuery(document).ready(function($){
+    $('body').on('click','.nav-tabs a',function(e){
+        e.preventDefault();
+        var current = $(this);
+        $('.tab-pane.fade.in.active').removeClass('in active');
+        $(current.attr('href')).addClass('in active');
+    });
+});
