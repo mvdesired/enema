@@ -21,6 +21,7 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
         slot_date:'21',
         slot_day:'Tuesday',
         slot_month:'April',
+        slot_id:'1',
         slot_year:'2019',
         TIME_SLOT:[{
             time_from:'2 AM',
@@ -300,6 +301,7 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
             slot_day:'Tuesday',
             slot_month:'April',
             slot_year:'2019',
+            slot_id:''+$scope.courseTimeSlots.length+1,
             TIME_SLOT:[{
                 time_from:'2 AM',
                 time_to:'4 PM',
@@ -322,10 +324,10 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
     $scope.removeFullSlot = function(index){
         $scope.courseTimeSlots.splice(index,1);
     }
-    $scope.editCourse = function(key){
+    $scope.editCourse = function(key,$index){
         $scope.course_name = key.course_name;
         $scope.course_city = key.course_city;
-        $scope.course_location = key.course_location;
+        $scope.course_location = key.course_area;
         $scope.workshop_dec = key.course_desc;
         $scope.course_price = key.course_actual_price;
         $scope.course_d_price = key.course_discount_price;
@@ -337,13 +339,15 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
         $scope.course_id = key.course_id;
         $scope.rating_count = key.course_rating_count;
         $scope.course_best_seller_status = key.course_best_seller_status;
-        $scope.currentKeyEditing = key;
+        $scope.currentKeyEditing = $index+1;
     }
     $scope.saveCourse = function(){
         $scope.isLoading = true;
         if($scope.currentKeyEditing){
             var WSObject = $scope.fDB.ref('APP_DATA').child('COURSES_DATA').child($scope.currentKeyEditing);
-            var obj = $firebaseObject(WSObject);
+            //var obj = $firebaseObject(WSObject);
+            //console.log(obj);
+            var obj = {};
             obj.course_name=$scope.course_name;
             obj.course_city=$scope.course_city;
             obj.course_desc=$scope.workshop_dec;
@@ -351,15 +355,27 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
             obj.course_actual_price=$scope.course_price;
             obj.course_discount_price=$scope.course_d_price;
             obj.course_category = $scope.course_category;
-            obj.COURSE_REQUIRED=courseRequiredData;
-            obj.course_image=url;
+            //obj.COURSE_REQUIRED=courseRequiredData;
+            //obj.course_image=url;
             obj.course_rating=$scope.worksop_rating;
             obj.course_id=$scope.course_id;
             obj.course_rating_count=$scope.rating_count;
-            obj.COURSE_SLOT=$scope.courseTimeSlots;
             obj.course_best_seller_status=$scope.course_best_seller_status;
-            obj.NOTES = {SLOT_NOTE:$scope.course_slot_note}
-            obj.$save().then(function(ref) {
+            for(var i = 0;i<$scope.courseTimeSlots.length;i++){
+                delete $scope.courseTimeSlots[i].$$hashKey;
+                if(typeof($scope.courseTimeSlots[i].TIME_SLOT) != "undefined"){
+                    for(var j=0;j<$scope.courseTimeSlots[i].TIME_SLOT.length;j++){
+                        delete $scope.courseTimeSlots[i].TIME_SLOT[j].$$hashKey;
+                    }
+                }
+            }
+            obj.COURSE_SLOT=$scope.courseTimeSlots;
+            obj.NOTES = {SLOT_NOTE:$scope.course_slot_note};
+            WSObject.update(obj);
+            $scope.showNoti(200,'Course Added Successfully');
+            $scope.isLoading = false;
+            $window.location.reload();
+            /*obj.$save().then(function(ref) {
                 $scope.showNoti(200,"Workshop Updated");
                 $scope.isLoading = false;
                 if($scope.reqImageArray.length>0){
@@ -369,7 +385,7 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
                 ref.key === obj.$id; // true
             }, function(error) {
                 $scope.showNoti(404,error);
-            });
+            });*/
         }
         else{
             var courseObject = $scope.fDB.ref('APP_DATA').child('COURSES_DATA');

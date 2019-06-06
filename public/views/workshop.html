@@ -106,7 +106,7 @@
                         <div class="gallery_image">
                             <div class="form-group">
                                 <label for="course_gallery">Workshop Gallery</label>
-                                <input type="file" class="form-control" onchange="angular.element(this).scope().galleryImage(event)" accept="image/*" id="course_gallery" ng-model="$parent.course_gallery" multiple/>
+                                <input type="file" class="form-control" onchange="angular.element(this).scope().galleryImage(event)" accept="image/*" id="course_gallery" max="4" ng-model="$parent.course_gallery" multiple/>
                             </div>
                             <div class="form-group">
                                 <div id="aniimated-thumbnials" class="list-unstyled row clearfix">
@@ -232,7 +232,7 @@
                                     <td ng-bind="cl.course_name"></td>
                                     <td>
                                         <button type="button" class="btn btn-primary btn-xs waves-effect"
-                                            ng-click="$parent.editCourse(cl)">
+                                            ng-click="$parent.editCourse(cl,$index)">
                                             <i class="material-icons">edit</i>
                                         </button>
                                         <button type="button" class="btn btn-danger btn-xs waves-effect"
