@@ -342,7 +342,49 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
         $scope.currentKeyEditing = $index+1;
     }
     $scope.saveCourse = function(){
+        console.log($scope.course_name);
+        if(typeof($scope.course_name) == "undefined" || $scope.course_name == ''){
+            alert("Workshop name should not be blank");
+            return false;
+        }
+        if(typeof($scope.workshop_dec) == "undefined" || $scope.workshop_dec == ''){
+            alert("Workshop description should not be blank");
+            return false;
+        }
+        if(typeof($scope.course_city) == "undefined" || $scope.course_city == ''){
+            alert("Workshop city should not be blank");
+            return false;
+        }
+        if(typeof($scope.course_location) == "undefined" || $scope.course_location == ''){
+            alert("Workshop location should not be blank");
+            return false;
+        }
+        if(typeof($scope.course_price) == "undefined" || $scope.course_price == ''){
+            alert("Workshop price should not be blank");
+            return false;
+        }
+        if(typeof($scope.course_slot_note) == "undefined" || $scope.course_slot_note == ''){
+            alert("Workshop slot note should not be blank");
+            return false;
+        }
+        if(typeof($scope.course_category) == "undefined" || $scope.course_category == ''){
+            alert("Workshop category should not be blank");
+            return false;
+        }
+        if(typeof($scope.mediaFile.name) == "undefined" || $scope.mediaFile.name == ''){
+            alert("Workshop image should not be blank");
+            return false;
+        }
+        if($scope.multiImages.length < 1){
+            alert("Workshop gallery images should not be blank");
+            return false;
+        }
+        if($scope.reqImageArray.length < 1){
+            alert("Workshop gallery images should not be blank");
+            return false;
+        }
         $scope.isLoading = true;
+        $scope.mainLoader = true;
         if($scope.currentKeyEditing){
             var WSObject = $scope.fDB.ref('APP_DATA').child('COURSES_DATA').child($scope.currentKeyEditing);
             //var obj = $firebaseObject(WSObject);
@@ -374,6 +416,7 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
             WSObject.update(obj);
             $scope.showNoti(200,'Course Added Successfully');
             $scope.isLoading = false;
+            $scope.mainLoader = false;
             $window.location.reload();
             /*obj.$save().then(function(ref) {
                 $scope.showNoti(200,"Workshop Updated");
@@ -455,6 +498,7 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
                                                                 req_image:'',
                                                                 req_name:'',
                                                             }];
+                                                            $scope.mainLoader = false;
                                                             $window.location.reload();
                                                         }
                                                     });
@@ -492,7 +536,7 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
     };
     $scope.saveReqImage = function(event,index){
         $scope.reqImageArray[index] = event.target.files[0];
-    }
+    };
     $scope.removeGImage = function(index){
         $scope.multiImages.splice(index,1);
         $scope.multiImagesSrc.splice(index,1);
@@ -509,7 +553,99 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
             $scope.ad_sliders = obj.AD_SLIDER;
             $scope.ad_home_screen_ads = obj.HOME_SCREEN_ADS.TOP_SCREEN;
         });
-    }
+        var adCoursesObject = $scope.fDB.ref('APP_DATA').child('COURSES_DATA');
+        $scope.adCourseList = $firebaseArray(adCoursesObject);
+    };
+    $scope.saveAdDeal = function(){
+        $scope.isLoading = true;
+        var WSObject = $scope.fDB.ref('APP_DATA').child('ADS_DATA').child('AD_DEALS');
+        var obj ={};
+        obj.deal_1 = {image:$scope.ad_deals.deal_1.image,workshop:$scope.ad_deals.deal_1.workshop};
+        obj.deal_2 = {image:$scope.ad_deals.deal_2.image,workshop:$scope.ad_deals.deal_2.workshop};
+        obj.deal_3 = {image:$scope.ad_deals.deal_3.image,workshop:$scope.ad_deals.deal_3.workshop};
+        obj.deal_4 = {image:$scope.ad_deals.deal_4.image,workshop:$scope.ad_deals.deal_4.workshop};
+        WSObject.update(obj);
+        $scope.showNoti(200,'Deal save successfully');
+        $scope.isLoading = false;
+    };
+    $scope.adImageDeal1 = function(e){
+        var f_storageRef = $scope.fStorage.ref("availble_locations_image/"+e.target.files[0].name);
+        var f_storage = $firebaseStorage(f_storageRef);
+        var uploadTask = f_storage.$put(e.target.files[0]);
+        $scope.mainLoader = true;
+        uploadTask.$complete(snapshot=>{
+            var imagePath = $scope.fStorage.ref("availble_locations_image/"+e.target.files[0].name);
+            $firebaseStorage(imagePath).$getDownloadURL().then(function(url) {
+                $scope.ad_deals.deal_1.image = url;
+                $scope.mainLoader = false;
+            });
+        });
+    };
+    $scope.adImageDeal2 = function(e){
+        var f_storageRef = $scope.fStorage.ref("availble_locations_image/"+e.target.files[0].name);
+        var f_storage = $firebaseStorage(f_storageRef);
+        var uploadTask = f_storage.$put(e.target.files[0]);
+        $scope.mainLoader = true;
+        uploadTask.$complete(snapshot=>{
+            var imagePath = $scope.fStorage.ref("availble_locations_image/"+e.target.files[0].name);
+            $firebaseStorage(imagePath).$getDownloadURL().then(function(url) {
+                $scope.ad_deals.deal_2.image = url;
+                $scope.mainLoader = false;
+            });
+        });
+    };
+    $scope.adImageDeal3 = function(e){
+        var f_storageRef = $scope.fStorage.ref("availble_locations_image/"+e.target.files[0].name);
+        var f_storage = $firebaseStorage(f_storageRef);
+        var uploadTask = f_storage.$put(e.target.files[0]);
+        $scope.mainLoader = true;
+        uploadTask.$complete(snapshot=>{
+            var imagePath = $scope.fStorage.ref("availble_locations_image/"+e.target.files[0].name);
+            $firebaseStorage(imagePath).$getDownloadURL().then(function(url) {
+                $scope.ad_deals.deal_3.image = url;
+                $scope.mainLoader = false;
+            });
+        });
+    };
+    $scope.adImageDeal4 = function(e){
+        var f_storageRef = $scope.fStorage.ref("availble_locations_image/"+e.target.files[0].name);
+        var f_storage = $firebaseStorage(f_storageRef);
+        var uploadTask = f_storage.$put(e.target.files[0]);
+        $scope.mainLoader = true;
+        uploadTask.$complete(snapshot=>{
+            var imagePath = $scope.fStorage.ref("availble_locations_image/"+e.target.files[0].name);
+            $firebaseStorage(imagePath).$getDownloadURL().then(function(url) {
+                $scope.ad_deals.deal_4.image = url;
+                $scope.mainLoader = false;
+            });
+        });
+    };
+    $scope.adImageHomeTopScreen = function(e){
+        var f_storageRef = $scope.fStorage.ref("availble_locations_image/"+e.target.files[0].name);
+        var f_storage = $firebaseStorage(f_storageRef);
+        var uploadTask = f_storage.$put(e.target.files[0]);
+        $scope.mainLoader = true;
+        uploadTask.$complete(snapshot=>{
+            var imagePath = $scope.fStorage.ref("availble_locations_image/"+e.target.files[0].name);
+            $firebaseStorage(imagePath).$getDownloadURL().then(function(url) {
+                $scope.ad_home_screen_ads.ad_image = url;
+                $scope.mainLoader = false;
+            });
+        });
+    };
+    $scope.saveAdHomeTopScreen = function(){
+        $scope.isLoading = true;
+        var WSObject = $scope.fDB.ref('APP_DATA').child('ADS_DATA').child('HOME_SCREEN_ADS').child('TOP_SCREEN');
+        var obj ={};
+        obj.ad_click = $scope.ad_home_screen_ads.ad_click;
+        obj.ad_image = $scope.ad_home_screen_ads.ad_image;
+        obj.ad_price = $scope.ad_home_screen_ads.ad_price;
+        obj.ad_title = $scope.ad_home_screen_ads.ad_title;
+        obj.workshop = $scope.ad_home_screen_ads.workshop;
+        WSObject.update(obj);
+        $scope.showNoti(200,'Home screen ad save successfully');
+        $scope.isLoading = false;
+    };
     $scope.saveAdSlider = function(){
         $scope.isLoading = true;
         for(var i = 0;i<$scope.adMediaFile.length;i++){
@@ -536,10 +672,10 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
                 })(i);
             }
         }
-    }
+    };
     $scope.changeAdImage = function(event,index){
         $scope.adMediaFile[index] = event.target.files[0];
-    }
+    };
     /****** Settings Functions ******/
     $scope.getSettings = function(){
         var supportObject = $scope.fDB.ref('APP_DATA').child('SUPPORT');
@@ -550,7 +686,7 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
             $scope.referMessage = referMessage.refer_message;
         });
         
-    }
+    };
     /****** Coupons Functions ******/
     $scope.getCouponsList = function(){
         var couponbject = $scope.fDB.ref('APP_DATA').child('COUPON_CODES');
@@ -566,7 +702,7 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
         });
         $scope.cpnList = cpnObj;
         obj.$bindTo($scope, "cpnList");
-    }
+    };
     /****** Coupons Functions ******/
     $scope.getBookingList = function(){
         var bookingObject = $scope.fDB.ref('USER_DATA').child('USERS_BOOKINGS');
@@ -640,7 +776,7 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
         });
         
         //obj.$bindTo($scope, "bknList");
-    }
+    };
     /****** Route Changes ********/
     $scope.$on('$routeChangeStart',function(scope, next, current){
         $scope.mainLoader = true;
@@ -650,3 +786,47 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
         $scope.mainLoader = false;
     });
 }]);
+enemaApp.directive('datePicker',function(){
+    return {
+        restrict: 'A',
+        link: function (scope, element, attrs, ngModelCtrl) {
+            element.on('click',function(){
+                var currentIndex = attrs.currentindex;
+                console.log();
+                jQuery('#datepicker-'+currentIndex).datepicker({
+                    dateFormat: 'DD,d,MM,yy',
+                    minDate:0,
+                    onSelect: function (date) {
+                        var exDate = date.split(',');
+                        scope.courseTimeSlots[currentIndex].slot_date = exDate[1];
+                        scope.courseTimeSlots[currentIndex].slot_day = exDate[0];
+                        scope.courseTimeSlots[currentIndex].slot_month = exDate[2];
+                        scope.courseTimeSlots[currentIndex].slot_year = exDate[3];
+                        scope.$apply();
+                    }
+                });
+                jQuery('#datepicker-'+currentIndex).datepicker('show');
+            })
+        }
+    };
+});
+enemaApp.directive('autoComplete',function(){
+    return{
+        restrict:'A',
+        link: function (scope, element, attrs, ngModelCtrl) {
+            var input = $(element).get(0);
+            var autocomplete = new google.maps.places.Autocomplete(input);
+                autocomplete.addListener('place_changed', function() {
+                var place = autocomplete.getPlace();
+                console.log(place);
+                if (!place.geometry) {
+                    // User entered the name of a Place that was not suggested and
+                    // pressed the Enter key, or the Place Details request failed.
+                    window.alert("No details available for input: '" + place.name + "'");
+                    return;
+                }
+                scope.course_location = place.name;
+            });
+        }
+    };
+});

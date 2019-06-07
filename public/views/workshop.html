@@ -33,7 +33,7 @@
                         <div class="form-group">
                             <label for="course_location">Location</label>
                             <div class="form-line">
-                                <input type="text" id="course_location" ng-model="$parent.course_location" class="form-control" placeholder="Workshop Location">
+                                <input type="text" id="course_location" auto-complete ng-model="$parent.course_location" class="form-control" placeholder="Workshop Location">
                             </div>
                         </div>
                         <div class="form-group">
@@ -127,42 +127,36 @@
                                 <div class="col-sm-6">
                                     <label>Slot Date</label>
                                     <div class="form-line">
-                                        <select class="form-control" ng-model="cTS.slot_date">
-                                            <option ng-repeat="x in [].constructor(31) track by $index" ng-selected="$index+1 == cTS.slot_date" value="{{$index+1}}">{{$index+1}}</option>
-                                        </select>
+                                        <input type="text" class="form-control" ng-model="cTS.slot_date" readonly/>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <label>Slot Day</label>
                                     <div class="form-line">
-                                        <select class="form-control" ng-model="cTS.slot_day">
-                                            <option ng-repeat="d in $parent.days" ng-selected="d == cTS.slot_day" value="{{d}}">{{d}}</option>
-                                        </select>
+                                        <input type="text" class="form-control" ng-model="cTS.slot_day" readonly/>
                                     </div>
                                 </div>
                                 <div class="clearfix"></div>
                             </div>
                             <div class="form-group">
-                                <div class="col-sm-6">
+                                <div class="col-sm-5">
                                     <label>Slot Month</label>
                                     <div class="form-line">
-                                        <select class="form-control" ng-model="cTS.slot_month">
-                                            <option ng-repeat="m in $parent.month" ng-selected="m == cTS.slot_month" value="{{m}}">{{m}}</option>
-                                        </select>
+                                        <input type="text" class="form-control" ng-model="cTS.slot_month" readonly/>
                                     </div>
                                     
                                 </div>
-                                <div class="col-sm-6">
+                                <div class="col-sm-5">
                                     <label>Slot Year</label>
                                     <div class="form-line">
-                                        <select class="form-control" ng-model="cTS.slot_year">
-                                            <option value="2019" ng-selected="cTS.slot_year == '2019'">2019</option>
-                                            <option value="2020" ng-selected="cTS.slot_year == '2020'">2020</option>
-                                            <option value="2021" ng-selected="cTS.slot_year == '2021'">2021</option>
-                                            <option value="2022" ng-selected="cTS.slot_year == '2022'">2022</option>
-                                            <option value="2023" ng-selected="cTS.slot_year == '2023'">2023</option>
-                                        </select>
+                                        <input type="text" class="form-control" ng-model="cTS.slot_year" readonly/>
                                     </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <span class="add_course_slot">
+                                        <i class="material-icons" date-picker currentIndex="{{$index}}">event</i>
+                                    </span>
+                                    <input type="text" id="datepicker-{{$index}}" style="width:1px;border:0px;" readonly />
                                 </div>
                                 <div class="clearfix"></div>
                             </div>
