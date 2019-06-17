@@ -43,6 +43,7 @@
     <script defer src="/js/angular-datatables.util.js"></script>
     <script defer src="/js/angular-datatables.options.js"></script>
     <script defer src="/js/angular-datatables.renderer.js"></script>
+    <script defer src="/js/angular-bootstrap-multiselect.min.js"></script>
     <script defer src="/js/storage.js"></script>
     <script defer src="/js/slimscroll.js"></script>
     <script defer src="/js/scripts.js"></script>
@@ -137,6 +138,18 @@
                             <a href="#!coupons">
                                 <i class="material-icons">bookmark_border</i>
                                 <span>Coupons</span>
+                            </a>
+                        </li>
+                        <li ng-class="getClass('/notifications')">
+                            <a href="#!notifications">
+                                <i class="material-icons">notifications</i>
+                                <span>Notifications</span>
+                            </a>
+                        </li>
+                        <li ng-class="getClass('/reviews')">
+                            <a href="#!reviews">
+                                <i class="material-icons">rate_review</i>
+                                <span>Reviews</span>
                             </a>
                         </li>
                         <li ng-class="getClass('/settings')">

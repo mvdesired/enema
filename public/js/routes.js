@@ -33,7 +33,13 @@ enemaApp.config(['$routeProvider','$locationProvider',
       }).
       when('/coupons',{
         templateUrl: 'views/coupons.html'
-      })
+      }).
+      when('/notifications',{
+        templateUrl: 'views/notifications.html'
+      }).
+      when('/reviews',{
+        templateUrl: 'views/reviews.html'
+      });
       // when('/reset-password', {
       //   templateUrl: 'reset-password.html'
       // }).

@@ -17,4 +17,4 @@ document.addEventListener('DOMContentLoaded', function() {
       
     }
   });
-var enemaApp = angular.module('enemaApp',['ngRoute','ngStorage','ngSanitize','firebase','datatables']);
+var enemaApp = angular.module('enemaApp',['ngRoute','ngStorage','ngSanitize','firebase','datatables','btorfs.multiselect']);

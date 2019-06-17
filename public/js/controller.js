@@ -12,6 +12,7 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
     $scope.isUploading = false;
     $scope.editCity = {};
     $scope.curCatKey = '';
+    $scope.usersList=[];
     $scope.multiImages = [];
     $scope.multiImagesSrc = [];
     $scope.month = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -724,6 +725,7 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
                 var userDataArray = $scope.fDB.ref('USER_DATA').child('USER_PROFILE').child(key);
                 var userData = $firebaseObject(userDataArray);
                 userData.$loaded().then(function() {
+                    console.log(value);
                     angular.forEach(value,function(v,k){
                         if(v.booking_status == 'cancelled'){
                             $scope.bknCList.push({
@@ -736,7 +738,8 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
                                 booking_time:v.booking_time,
                                 course_fee:v.course_fee,
                                 booking_status:v.booking_status,
-                                uname:userData.full_name
+                                uname:userData.full_name,
+                                booking_type:v.booking_type
                             });
                         }
                         else if(v.booking_status == 'booked'){
@@ -750,7 +753,8 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
                                 booking_time:v.booking_time,
                                 course_fee:v.course_fee,
                                 booking_status:v.booking_status,
-                                uname:userData.full_name
+                                uname:userData.full_name,
+                                booking_type:v.booking_type
                             });
                         }
                         else{
@@ -764,7 +768,8 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
                                 booking_time:v.booking_time,
                                 course_fee:v.course_fee,
                                 booking_status:v.booking_status,
-                                uname:userData.full_name
+                                uname:userData.full_name,
+                                booking_type:v.booking_type
                             });
                         }
                         $scope.bknKeys.push(key);
@@ -777,6 +782,13 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
         
         //obj.$bindTo($scope, "bknList");
     };
+    /****** Users List ******/
+    $scope.getUsersList = function(){
+        var userbject = $scope.fDB.ref('USER_DATA').child('USER_PROFILE');
+        $scope.userlist = $firebaseArray(userbject);
+    }
+    /****** Reviews List ******/
+    
     /****** Route Changes ********/
     $scope.$on('$routeChangeStart',function(scope, next, current){
         $scope.mainLoader = true;

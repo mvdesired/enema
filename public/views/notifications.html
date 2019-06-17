@@ -1,0 +1,37 @@
+<section class="content" ng-init="$parent.getUsersList()">
+    <div class="container-fluid">
+        <div class="block-header">
+            <h2>Send Notification</h2>
+        </div>
+    </div>
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+                <div class="body">
+                    <form>
+                        <label for="noti_users">Select User</label>
+                        <div class="form-group">
+                            <div class="form-line">
+                                <multiselect ng-model="$parent.noti_users" options="$parent.userlist" show-search="true" id-prop="$id" display-prop="full_name" search-limit="10" show-select-all="true" show-unselect-all="true">
+                                </multiselect>
+                            </div>
+                        </div>
+                        <label for="noti_title">Notification Title</label>
+                        <div class="form-group">
+                            <div class="form-line">
+                                <input type="text" id="noti_title" name="noti_title" ng-model="$parent.noti_title" class="form-control" placeholder="Notification Title" />
+                            </div>
+                        </div>
+                        <label for="noti_msg">Notification Message</label>
+                        <div class="form-group">
+                            <div class="form-line">
+                                <textarea ng-model="$parent.noti_msg" id="noti_msg" name="noti_msg" class="form-control" placeholder="Notification Message"></textarea>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-primary m-t-15 waves-effect" ng-disabled="$parent.isLoading" ng-click="$parent.sendNotification();">Send</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

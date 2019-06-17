@@ -29,6 +29,7 @@
                                         <th>Time</th>
                                         <th>Fee</th>
                                         <th>Status</th>
+                                        <th>Booking Type</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -45,6 +46,10 @@
                                         <td ng-bind="bl.booking_time"></td>
                                         <td ng-bind="bl.course_fee"></td>
                                         <td ng-bind="bl.booking_status"></td>
+                                        <td ng-switch="bl.booking_type">
+                                            <span ng-switch-when="online">Payment Done</span>
+                                            <span ng-switch-when="venue">Pay at Venue</span>
+                                        </td>
                                         <!-- <td>
                                             <a ng-href="#!/booking-view/{{$parent.bknKeys[$index]}}" class="btn btn-primary btn-sm waves-effect">
                                                 <i class="material-icons">View </i>
@@ -68,6 +73,7 @@
                                         <th>Time</th>
                                         <th>Fee</th>
                                         <th>Status</th>
+                                        <th>Booking Type</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -84,6 +90,10 @@
                                         <td ng-bind="bl.booking_time"></td>
                                         <td ng-bind="bl.course_fee"></td>
                                         <td ng-bind="bl.booking_status"></td>
+                                        <td ng-switch="bl.booking_type">
+                                            <span ng-switch-when="online">Payment Done</span>
+                                            <span ng-switch-when="venue">Pay at Venue</span>
+                                        </td>
                                         <!-- <td>
                                             <a ng-href="#!/booking-view/{{$parent.bknKeys[$index]}}" class="btn btn-primary btn-sm waves-effect">
                                                 <i class="material-icons">View </i>
@@ -107,6 +117,7 @@
                                         <th>Time</th>
                                         <th>Fee</th>
                                         <th>Status</th>
+                                        <th>Booking Type</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -123,6 +134,10 @@
                                         <td ng-bind="bl.booking_time"></td>
                                         <td ng-bind="bl.course_fee"></td>
                                         <td ng-bind="bl.booking_status"></td>
+                                        <td ng-switch="bl.booking_type">
+                                            <span ng-switch-when="online">Payment Done</span>
+                                            <span ng-switch-when="venue">Pay at Venue</span>
+                                        </td>
                                         <!-- <td>
                                             <a ng-href="#!/booking-view/{{$parent.bknKeys[$index]}}" class="btn btn-primary btn-sm waves-effect">
                                                 <i class="material-icons">View </i>
