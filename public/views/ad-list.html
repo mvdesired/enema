@@ -107,7 +107,59 @@
                         <h2>AD Slider</h2>
                     </div>
                     <div class="body">
-                        <div class="form-group">
+                        <div class="row" ng-repeat="aS in ad_sliders">
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label>Ad TItle</label>
+                                    <div class="form-line">
+                                        <input type="text" class="form-control" ng-model="aS.ad_title" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label>Ad Price</label>
+                                    <div class="form-line">
+                                        <input type="text" class="form-control"  ng-model="aS.ad_price" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label>Ad Image</label>
+                                    <div class="form-line">
+                                        <input type="file" class="form-control" onchange="angular.element(this).scope().changeAdImage(event,angular.element(this).scope().$index)" accept="image/*" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label>Ad Click</label>
+                                    <div class="form-line">
+                                        <input type="text" class="form-control" ng-model="aS.ad_click" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label>Ad Workshop</label>
+                                    <div class="form-line">
+                                        <select ng-model="aS.workshop" class="form-control">
+                                            <option ng-repeat="cocyl in $parent.adCourseList" value="{{cocyl.course_id}}">{{cocyl.course_name}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <span ng-show="($index == ($parent.ad_sliders.length-1))" class="removeTimeSlot" ng-click="$parent.addAdSlider()">
+                                    <i class="material-icons">add_circle</i>
+                                </span>
+                                <span ng-show="($index < ($parent.ad_sliders.length-1))" class="removeTimeSlot" ng-click="$parent.removeAdSlider($index)">
+                                    <i class="material-icons">remove_circle</i>
+                                </span>
+                            </div>
+                        </div>
+                        <!-- <div class="form-group">
                             <label>Ad Slider 1 Image</label>
                             <div class="form-line">
                                 <input type="file" class="form-control" onchange="angular.element(this).scope().changeAdImage(event,0)" accept="image/*"/>
@@ -145,7 +197,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                         <button type="button" class="btn btn-primary m-t-15 waves-effect"
                             ng-disabled="$parent.isLoading" ng-click="$parent.saveAdSlider()">Save</button>
                     </div>

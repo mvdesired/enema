@@ -13,8 +13,11 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
     $scope.editCity = {};
     $scope.curCatKey = '';
     $scope.usersList=[];
+    $scope.userlist = [];
     $scope.multiImages = [];
     $scope.multiImagesSrc = [];
+    $scope.ad_sliders = [];
+    $scope.maxFileSize = 200;
     $scope.month = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     $scope.days = ['Monday','Tuesday','Wedensday','Thursday','Friday','Saturday','Sunday'];
     $scope.preDefineCourse = ['Laptop','Pendrive','Camera','Notebook'];
@@ -185,6 +188,12 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
         });
     }
     $scope.changeImage = function(event){
+        var currentFile = event.target.files[0];
+        var fileSize = currentFile.size/1024;
+        if(fileSize > $scope.maxFileSize){
+            alert('Please upload max file size 200KB');
+            return false;
+        }
         $scope.mediaFile = event.target.files[0];
     }
     $scope.cityDetails = function(){
@@ -529,13 +538,26 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
     };
     $scope.galleryImage = function(event){
         for(var i = 0;i<event.target.files.length;i++){
-            $scope.multiImages.push(event.target.files[i]);
-            fileReader.readAsDataUrl(event.target.files[i], $scope).then(function(result) {
-                $scope.multiImagesSrc.push(result);
-            });
+            var currentFile = event.target.files[i];
+            var fileSize = currentFile.size/1024;
+            if(fileSize > $scope.maxFileSize){
+                alert(currentFile.name+' file size exceeded 200KB');
+            }
+            else{
+                $scope.multiImages.push(event.target.files[i]);
+                fileReader.readAsDataUrl(event.target.files[i], $scope).then(function(result) {
+                    $scope.multiImagesSrc.push(result);
+                });
+            }
         }
     };
     $scope.saveReqImage = function(event,index){
+        var currentFile = event.target.files[0];
+        var fileSize = currentFile.size/1024;
+        if(fileSize > $scope.maxFileSize){
+            alert('Please upload max file size 200KB');
+            return false;
+        }
         $scope.reqImageArray[index] = event.target.files[0];
     };
     $scope.removeGImage = function(index){
@@ -551,7 +573,10 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
         var obj = $firebaseObject(adsObject);
         obj.$loaded().then(function() {
             $scope.ad_deals = obj.AD_DEALS;
-            $scope.ad_sliders = obj.AD_SLIDER;
+            angular.forEach(obj.AD_SLIDER,function(v,k){
+                $scope.ad_sliders.push({ad_click:v.ad_click,ad_price:v.ad_price,ad_title:v.ad_title,workshop:v.workshop,ad_image:v.ad_image,adKey:k});
+            });
+            $scope.ad_sliders.push({ad_click:'',ad_price:'',ad_title:'',workshop:0,ad_image:'',adKey:$scope.ad_sliders.length});
             $scope.ad_home_screen_ads = obj.HOME_SCREEN_ADS.TOP_SCREEN;
         });
         var adCoursesObject = $scope.fDB.ref('APP_DATA').child('COURSES_DATA');
@@ -649,34 +674,84 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
     };
     $scope.saveAdSlider = function(){
         $scope.isLoading = true;
-        for(var i = 0;i<$scope.adMediaFile.length;i++){
-            if($scope.adMediaFile[i]){
-                (function(k){
-                    var f_storageRef = $scope.fStorage.ref("availble_locations_image/"+$scope.adMediaFile[k].name);
-                    var f_storage = $firebaseStorage(f_storageRef);
-                    var uploadTask = f_storage.$put($scope.adMediaFile[k]);
-                    uploadTask.$complete(snapshot=>{
-                        var imagePath = $scope.fStorage.ref(snapshot.metadata.fullPath);
-                        $firebaseStorage(imagePath).$getDownloadURL().then(function(url) {
-                            var catDObject = $scope.fDB.ref('APP_DATA').child('ADS_DATA').child('AD_SLIDER').child(k);
-                            var obj = $firebaseObject(catDObject);
-                            obj.ad_image = url;
-                            obj.$save().then((res)=>{
+        if($scope.adMediaFile.length > 0){
+            for(var i = 0;i<$scope.adMediaFile.length;i++){
+                if($scope.adMediaFile[i]){
+                    (function(k){
+                        var f_storageRef = $scope.fStorage.ref("availble_locations_image/"+$scope.adMediaFile[k].name);
+                        var f_storage = $firebaseStorage(f_storageRef);
+                        var uploadTask = f_storage.$put($scope.adMediaFile[k]);
+                        uploadTask.$complete(snapshot=>{
+                            var imagePath = $scope.fStorage.ref(snapshot.metadata.fullPath);
+                            $firebaseStorage(imagePath).$getDownloadURL().then(function(url) {
+                                console.log($scope.ad_sliders[k]);
+                                var catDObject = $scope.fDB.ref('APP_DATA').child('ADS_DATA').child('AD_SLIDER').child($scope.ad_sliders[k].adKey);
+                                var obj = $firebaseObject(catDObject);
+                                obj.ad_image = url;
+                                obj.ad_click = $scope.ad_sliders[k].ad_click;
+                                obj.ad_price = $scope.ad_sliders[k].ad_price;
+                                obj.ad_title = $scope.ad_sliders[k].ad_title;
+                                obj.workshop = $scope.ad_sliders[k].workshop;
+                                obj.$save().then((res)=>{
+                                });
+                                if(k == ($scope.adMediaFile.length-1)){
+                                    $scope.showNoti(200,'Ad Slider updated Successfully');
+                                    $scope.isLoading = false;
+                                    $window.location.reload();
+                                }
                             });
-                            if(k == ($scope.adMediaFile.length-1)){
-                                $scope.showNoti(200,'Ad Slider updated Successfully');
-                                $scope.isLoading = false;
-                                $window.location.reload();
-                            }
                         });
-                    });
-                })(i);
+                    })(i);
+                }
             }
+        }
+        else{
+            for(var j = 0;j<$scope.ad_sliders.length;j++){
+                var current = $scope.ad_sliders[j];
+                console.log(current);
+                if(current.ad_click != '' && current.ad_price != '' && current.ad_title != ''){
+                    var adSliderObject = $scope.fDB.ref('APP_DATA').child('ADS_DATA').child('AD_SLIDER').child(current.adKey);
+                    var obj = {};
+                    obj.ad_click = current.ad_click;
+                    obj.ad_title = current.ad_title;
+                    obj.ad_price = current.ad_price;
+                    obj.workshop = current.workshop;
+                    adSliderObject.update(obj);
+                    $scope.showNoti(200,'Ad Slider updated Successfully');
+                    $scope.isLoading = false;
+                }
+            }   
         }
     };
     $scope.changeAdImage = function(event,index){
+        var currentFile = event.target.files[0];
+        var fileSize = currentFile.size/1024;
+        if(fileSize > $scope.maxFileSize){
+            alert('Please upload max file size 200KB');
+            return false;
+        }
         $scope.adMediaFile[index] = event.target.files[0];
+        console.log($scope.adMediaFile);
     };
+    $scope.addAdSlider = function(){
+        $scope.ad_sliders.push({
+            ad_click:'',
+            ad_title:'',
+            ad_price:'',
+            workshop:'0',
+            ad_image:'',
+            adKey:$scope.ad_sliders.length
+        });
+    }
+    $scope.removeAdSlider = function(index){
+        var c = confirm("You want to remove this ad?");
+        if(c){
+            var adSliderObject = $scope.fDB.ref('APP_DATA').child('ADS_DATA').child('AD_SLIDER').child($scope.ad_sliders[index].adKey);
+            var obj = $firebaseObject(adSliderObject);
+            obj.$remove();
+            $scope.ad_sliders.splice(index,1);
+        }
+    }
     /****** Settings Functions ******/
     $scope.getSettings = function(){
         var supportObject = $scope.fDB.ref('APP_DATA').child('SUPPORT');
@@ -785,10 +860,68 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
     /****** Users List ******/
     $scope.getUsersList = function(){
         var userbject = $scope.fDB.ref('USER_DATA').child('USER_PROFILE');
-        $scope.userlist = $firebaseArray(userbject);
+        var obj = $firebaseObject(userbject);
+        obj.$loaded().then(function(){
+            angular.forEach(obj,function(v,k){
+                $scope.userlist.push({name:v.full_name+' ('+v.user_email+', '+v.user_mobile+')',$id:k});
+            });
+        });
     }
+    $scope.sendNotification = function(){
+        $scope.isLoading = true;
+        for(var i=0;i<$scope.noti_users.length;i++){
+            var CatObject = $scope.fDB.ref('USER_DATA').child('USER_NOTIFICATIONS').child($scope.noti_users[i].$id);
+            $firebaseArray(CatObject).$add({noti_title:$scope.noti_title,noti_message:$scope.noti_msg});
+            if(i == ($scope.noti_users.length-1)){
+                $scope.showNoti(200,'Notifications sent Successfully');
+                $scope.isLoading = false;
+                $scope.noti_title = '';
+                $scope.noti_msg = '';
+                $scope.noti_users= {};
+            }
+        }
+        
+    };
     /****** Reviews List ******/
-    
+    $scope.getReviewList = function(){
+        var reviewObject = $scope.fDB.ref('APP_DATA').child('REVIEW_DATA');
+        var obj = $firebaseObject(reviewObject);
+        var reviewList = {};
+        obj.$loaded().then(function() {
+            angular.forEach(obj, function(value, key) {
+                var courseDataArray = $scope.fDB.ref('APP_DATA').child('COURSES_DATA').child(key);
+                var courseDataObject = $firebaseObject(courseDataArray);
+                (function(reviewKey){
+                    courseDataObject.$loaded().then(function() {
+                        if(typeof(reviewList[reviewKey]) == 'undefined'){
+                            reviewList[reviewKey] = [];
+                        }
+                        reviewList[reviewKey].course_name = courseDataObject.course_name;
+                        angular.forEach(value,function(v,k){
+                            var userDataArray = $scope.fDB.ref('USER_DATA').child('USER_PROFILE').child(k);
+                            var userData = $firebaseObject(userDataArray);
+                            (function(reviewKey){
+                                userData.$loaded().then(function() {
+                                    if(typeof(reviewList[reviewKey].user_reviews) == 'undefined'){
+                                        reviewList[reviewKey].user_reviews = [];
+                                    }
+                                    reviewList[reviewKey].user_reviews.push({
+                                        user_name:userData.full_name,
+                                        review_comment:v.review_comment,
+                                        review_rating:v.review_rating
+                                    });
+                                });
+                            })(reviewKey)
+                        });
+                    });
+                })(key)
+                
+            });
+        });
+        $scope.reviewList = reviewList;
+        //obj.$bindTo($scope, "reviewList");
+        console.log($scope.reviewList);
+    }
     /****** Route Changes ********/
     $scope.$on('$routeChangeStart',function(scope, next, current){
         $scope.mainLoader = true;

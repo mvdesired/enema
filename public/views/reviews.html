@@ -1,4 +1,4 @@
-<section class="content" >
+<section class="content" ng-init="$parent.getReviewList()" >
     <div class="container-fluid">
         <div class="block-header">
             <h2>Reviews</h2>
@@ -6,10 +6,64 @@
     </div>
     <div class="row clearfix">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-        <div class="card">
-            <div class="body">
-                
+        <div class="card" ng-repeat="cR in reviewList">
+            <div class="header collapsable">
+                <h2 ng-bind="cR.course_name"></h2>
+                <i class="material-icons">keyboard_arrow_down</i>
+            </div>
+            <div class="body collapsed">
+                <div class="list-group" ng-repeat="uCR in cR.user_reviews">
+                    <a href="javascript:void(0);" class="list-group-item">
+                        <span class="badge bg-pink">{{uCR.user_name}}</span> Name
+                    </a>
+                    <a href="javascript:void(0);" class="list-group-item">
+                        <span class="badge bg-teal">{{uCR.review_comment}}</span> Comment
+                    </a>
+                    <a href="javascript:void(0);" class="list-group-item">
+                        <span class="badge bg-orange">{{uCR.review_rating}}</span> Rating
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 </section>
+<style type="text/css">
+.card .header.collapsable{
+    cursor: pointer;
+}
+.card .header.collapsable i{
+    position: absolute;
+    right: 13px;
+    top: 13px;
+    font-size: 36px;
+}
+.card .body{
+    -webkit-transition: all ease-in-out .3s;
+    -moz-transition: all ease-in-out .3s;
+    -ms-transition: all ease-in-out .3s;
+    -o-transition: all ease-in-out .3s;
+    transition: all ease-in-out .3s;
+}
+.card .body.collapsed{
+    height:0;
+    padding:0;
+    overflow: hidden;
+}
+</style>
+<script type="text/javascript">
+    jQuery(document).ready(function($){
+        $('.content').on('click','.collapsable',function(){
+            var current = $(this);
+            if(current.next('.body').hasClass('collapsed')){
+                $('.card .body').addClass('collapsed');
+                $('.card .collapsable').find('.material-icons').text('keyboard_arrow_down');
+                current.next('.body').removeClass('collapsed');
+                current.find('.material-icons').text('keyboard_arrow_up');
+            }
+            else{
+                current.find('.material-icons').text('keyboard_arrow_down');
+                current.next('.body').addClass('collapsed');
+            }
+        });
+    });
+</script>
