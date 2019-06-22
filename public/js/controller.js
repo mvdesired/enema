@@ -352,7 +352,6 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
         $scope.currentKeyEditing = $index+1;
     }
     $scope.saveCourse = function(){
-        console.log($scope.course_name);
         if(typeof($scope.course_name) == "undefined" || $scope.course_name == ''){
             alert("Workshop name should not be blank");
             return false;
@@ -398,7 +397,6 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
         if($scope.currentKeyEditing){
             var WSObject = $scope.fDB.ref('APP_DATA').child('COURSES_DATA').child($scope.currentKeyEditing);
             //var obj = $firebaseObject(WSObject);
-            //console.log(obj);
             var obj = {};
             obj.course_name=$scope.course_name;
             obj.course_city=$scope.course_city;
@@ -684,7 +682,6 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
                         uploadTask.$complete(snapshot=>{
                             var imagePath = $scope.fStorage.ref(snapshot.metadata.fullPath);
                             $firebaseStorage(imagePath).$getDownloadURL().then(function(url) {
-                                console.log($scope.ad_sliders[k]);
                                 var catDObject = $scope.fDB.ref('APP_DATA').child('ADS_DATA').child('AD_SLIDER').child($scope.ad_sliders[k].adKey);
                                 var obj = $firebaseObject(catDObject);
                                 obj.ad_image = url;
@@ -708,7 +705,6 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
         else{
             for(var j = 0;j<$scope.ad_sliders.length;j++){
                 var current = $scope.ad_sliders[j];
-                console.log(current);
                 if(current.ad_click != '' && current.ad_price != '' && current.ad_title != ''){
                     var adSliderObject = $scope.fDB.ref('APP_DATA').child('ADS_DATA').child('AD_SLIDER').child(current.adKey);
                     var obj = {};
@@ -731,7 +727,6 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
             return false;
         }
         $scope.adMediaFile[index] = event.target.files[0];
-        console.log($scope.adMediaFile);
     };
     $scope.addAdSlider = function(){
         $scope.ad_sliders.push({
@@ -784,11 +779,7 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
         var bookingObject = $scope.fDB.ref('USER_DATA').child('USERS_BOOKINGS');
         var bOBj = bookingObject.orderByChild("booking_status").equalTo("cancelled").once("value", function(dataSnapshot){
             var series = dataSnapshot.val();
-            if(series){
-              console.log("Found", series);
-            } else {
-              console.warn("Not found.");
-            }
+            
         });
         var obj = $firebaseObject(bookingObject);
         var bknObj = [];
@@ -800,7 +791,6 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
                 var userDataArray = $scope.fDB.ref('USER_DATA').child('USER_PROFILE').child(key);
                 var userData = $firebaseObject(userDataArray);
                 userData.$loaded().then(function() {
-                    console.log(value);
                     angular.forEach(value,function(v,k){
                         if(v.booking_status == 'cancelled'){
                             $scope.bknCList.push({
@@ -869,16 +859,58 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
     }
     $scope.sendNotification = function(){
         $scope.isLoading = true;
+        if($scope.noti_users.length < 1){
+            alert('Please choose atleast 1 user to send notification');
+            return false;
+        }
+        if($scope.noti_title == ''){
+            alert('Please fill the notification title');
+            return false;
+        }
+        if($scope.noti_message == ''){
+            alert('Please fill the notification message');
+            return false;
+        }
         for(var i=0;i<$scope.noti_users.length;i++){
             var CatObject = $scope.fDB.ref('USER_DATA').child('USER_NOTIFICATIONS').child($scope.noti_users[i].$id);
-            $firebaseArray(CatObject).$add({noti_title:$scope.noti_title,noti_message:$scope.noti_msg});
-            if(i == ($scope.noti_users.length-1)){
-                $scope.showNoti(200,'Notifications sent Successfully');
-                $scope.isLoading = false;
-                $scope.noti_title = '';
-                $scope.noti_msg = '';
-                $scope.noti_users= {};
-            }
+            $firebaseArray(CatObject).$add({notiTitle:$scope.noti_title,notiMsg:$scope.noti_msg,notiImg:"https://docs.centroida.co/wp-content/uploads/2017/05/notification.png"});
+            (function(k){
+                var userTokenObject = $scope.fDB.ref('USER_DATA').child('USER_PROFILE').child($scope.noti_users[k].$id);
+                var obj = $firebaseObject(userTokenObject);
+                obj.$loaded().then(function(){
+                    var device_token = obj.device_token;
+                    var notiData = {
+                        "to":device_token,
+                        "data":{
+                            "title":$scope.noti_title,
+                            "message":$scope.noti_msg,
+                            "image-url":"https://docs.centroida.co/wp-content/uploads/2017/05/notification.png"
+                        }
+                    };
+                    var settings = {
+                        "async": true,
+                        "crossDomain": true,
+                        "url": "https://fcm.googleapis.com/fcm/send",
+                        "method": "POST",
+                        "headers": {
+                          "content-type": "application/json",
+                          "authorization": "key=AAAAmIMOay0:APA91bGFXDg1QE2ib_pMLkn_fUXC95qcZMRrpn7s5Kj2DFvtY_d6adxYkhoEZHn36L0q88jKi3U7d2q2JC8Ft22lA9zgBrrBG5al5wB2rAljufGatpv0V_ijpSh6LWRjbIoHYg8qz5xp", //AIzaSyAAqFKs38JI3jPbmVfBKdEi040szQOEUvM
+                          "cache-control": "no-cache"
+                        },
+                        "processData": false,
+                        "data": JSON.stringify(notiData),//"{\n  \"to\":\n    \""+device_token+"\",\n  \"data\": {\n    \"title\": \""+$scope.noti_title+"\",\n    \"message\": \""+$scope.noti_message+"\",\n }\n}" //JSON.stringify(notiData)//
+                      }
+                      $.ajax(settings).done(function (response) {
+                        if(k == ($scope.noti_users.length-1)){
+                            $scope.showNoti(200,'Notifications sent Successfully');
+                            $scope.isLoading = false;
+                            $scope.noti_title = '';
+                            $scope.noti_msg = '';
+                            $scope.noti_users= {};
+                        }
+                      });
+                });
+            })(i);
         }
         
     };
@@ -914,14 +946,13 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
                             })(reviewKey)
                         });
                     });
-                })(key)
+                })(key);
                 
             });
         });
         $scope.reviewList = reviewList;
         //obj.$bindTo($scope, "reviewList");
-        console.log($scope.reviewList);
-    }
+    };
     /****** Route Changes ********/
     $scope.$on('$routeChangeStart',function(scope, next, current){
         $scope.mainLoader = true;
@@ -937,7 +968,6 @@ enemaApp.directive('datePicker',function(){
         link: function (scope, element, attrs, ngModelCtrl) {
             element.on('click',function(){
                 var currentIndex = attrs.currentindex;
-                console.log();
                 jQuery('#datepicker-'+currentIndex).datepicker({
                     dateFormat: 'DD,d,MM,yy',
                     minDate:0,
@@ -963,7 +993,6 @@ enemaApp.directive('autoComplete',function(){
             var autocomplete = new google.maps.places.Autocomplete(input);
                 autocomplete.addListener('place_changed', function() {
                 var place = autocomplete.getPlace();
-                console.log(place);
                 if (!place.geometry) {
                     // User entered the name of a Place that was not suggested and
                     // pressed the Enter key, or the Place Details request failed.

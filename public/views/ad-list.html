@@ -16,6 +16,7 @@
                                 <label for="course_name">Workshop</label>
                                 <div class="form-line">
                                     <select id="ad_deals_deal_1_workshop_id" ng-model="$parent.ad_deals.deal_1.workshop" class="form-control">
+                                        <option value="-1">Choose Workshop</option>
                                         <option ng-repeat="cocyl in $parent.adCourseList" value="{{cocyl.course_id}}">{{cocyl.course_name}}</option>
                                     </select>
                                 </div>
@@ -37,6 +38,7 @@
                                 <label for="course_name">Workshop</label>
                                 <div class="form-line">
                                     <select id="ad_deals_deal_2_workshop_id" ng-model="$parent.ad_deals.deal_2.workshop" class="form-control">
+                                        <option value="-1">Choose Workshop</option>
                                         <option ng-repeat="cocyl in $parent.adCourseList" value="{{cocyl.course_id}}">{{cocyl.course_name}}</option>
                                     </select>
                                 </div>
@@ -58,6 +60,7 @@
                                 <label for="course_name">Workshop</label>
                                 <div class="form-line">
                                     <select id="ad_deals_deal_2_workshop_id" ng-model="$parent.ad_deals.deal_3.workshop" class="form-control">
+                                        <option value="-1">Choose Workshop</option>
                                         <option ng-repeat="cocyl in $parent.adCourseList" value="{{cocyl.course_id}}">{{cocyl.course_name}}</option>
                                     </select>
                                 </div>
@@ -79,6 +82,7 @@
                                 <label for="course_name">Workshop</label>
                                 <div class="form-line">
                                     <select id="ad_deals_deal_2_workshop_id" onchange="angular.element(this).scope().adImageDeal4(event)" class="form-control">
+                                        <option value="-1">Choose Workshop</option>
                                         <option ng-repeat="cocyl in $parent.adCourseList" value="{{cocyl.course_id}}">{{cocyl.course_name}}</option>
                                     </select>
                                 </div>
