@@ -338,6 +338,8 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
         $scope.course_name = key.course_name;
         $scope.course_city = key.course_city;
         $scope.course_location = key.course_area;
+        $scope.course_lat = key.course_lat;
+        $scope.course_longi = key.course_longi;
         $scope.workshop_dec = key.course_desc;
         $scope.course_price = key.course_actual_price;
         $scope.course_d_price = key.course_discount_price;
@@ -407,6 +409,8 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
             obj.course_category = $scope.course_category;
             //obj.COURSE_REQUIRED=courseRequiredData;
             //obj.course_image=url;
+            obj.course_lat = $scope.course_lat;
+            obj.course_longi = $scope.course_longi;
             obj.course_rating=$scope.worksop_rating;
             obj.course_id=$scope.course_id;
             obj.course_rating_count=$scope.rating_count;
@@ -464,6 +468,8 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
                     csrObj.course_rating_count=""+Math.floor((Math.random() * 300) + 500)+"";
                     csrObj.COURSE_SLOT=$scope.courseTimeSlots;
                     csrObj.course_best_seller_status='1';
+                    csrObj.course_lat = $scope.course_lat;
+                    csrObj.course_longi = $scope.course_longi;
                     csrObj.NOTES = {SLOT_NOTE:$scope.course_slot_note}
                     csrObj.$save().then(function(ref){
                         $scope.addedKey = ref.key;
@@ -988,7 +994,7 @@ enemaApp.directive('datePicker',function(){
 enemaApp.directive('autoComplete',function(){
     return{
         restrict:'A',
-        link: function (scope, element, attrs, ngModelCtrl) {
+        link: function ($scope, element, attrs, ngModelCtrl) {
             var input = $(element).get(0);
             var autocomplete = new google.maps.places.Autocomplete(input);
                 autocomplete.addListener('place_changed', function() {
@@ -999,7 +1005,9 @@ enemaApp.directive('autoComplete',function(){
                     window.alert("No details available for input: '" + place.name + "'");
                     return;
                 }
-                scope.course_location = place.name;
+                $scope.$parent.course_location = place.name;
+                $scope.$parent.course_lat = place.geometry.location.lat();
+                $scope.$parent.course_longi = place.geometry.location.lng();
             });
         }
     };
