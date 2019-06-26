@@ -1,5 +1,8 @@
 enemaApp.controller('enemaController',['$scope','$location','$localStorage','$firebaseAuth','$firebaseObject','$firebaseStorage','$firebaseArray','$routeParams','$window','fileReader','$route',
 function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseStorage,$firebaseArray,$routeParams,$window,fileReader,$route){
+    var newDate = new Date();
+    var todayDate = newDate.getDate();
+    console.log(todayDate);
     $scope.$lcl = $localStorage;
     $scope.fAuth = $firebaseAuth();
     $scope.fDB = firebase.database();
@@ -19,14 +22,14 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
     $scope.ad_sliders = [];
     $scope.maxFileSize = 200;
     $scope.month = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-    $scope.days = ['Monday','Tuesday','Wedensday','Thursday','Friday','Saturday','Sunday'];
+    $scope.days = ['Sunday','Monday','Tuesday','Wedensday','Thursday','Friday','Saturday'];
     $scope.preDefineCourse = ['Laptop','Pendrive','Camera','Notebook'];
     $scope.courseTimeSlots = [{
-        slot_date:'21',
-        slot_day:'Tuesday',
-        slot_month:'April',
-        slot_id:'1',
-        slot_year:'2019',
+        slot_date:''+todayDate,
+        slot_day:''+$scope.days[newDate.getDay()],//'Tuesday',
+        slot_month:''+$scope.month[newDate.getMonth()], //'April',
+        slot_id:'0',
+        slot_year:''+newDate.getFullYear(),//'2019',
         TIME_SLOT:[{
             time_from:'2 AM',
             time_to:'4 PM',
@@ -307,11 +310,11 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
     };
     $scope.addFullSlot = function(){
         $scope.courseTimeSlots.push({
-            slot_date:'21',
-            slot_day:'Tuesday',
-            slot_month:'April',
-            slot_year:'2019',
-            slot_id:''+$scope.courseTimeSlots.length+1,
+            slot_date:''+todayDate,
+            slot_day:''+$scope.days[newDate.getDay()],//'Tuesday',
+            slot_month:''+$scope.month[newDate.getMonth()], //'April',
+            slot_year:''+newDate.getFullYear(),//'2019',
+            slot_id:''+$scope.courseTimeSlots.length,
             TIME_SLOT:[{
                 time_from:'2 AM',
                 time_to:'4 PM',
@@ -382,15 +385,15 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
             alert("Workshop category should not be blank");
             return false;
         }
-        if(typeof($scope.mediaFile.name) == "undefined" || $scope.mediaFile.name == ''){
+        if(!$scope.currentKeyEditing && typeof($scope.mediaFile.name) == "undefined" || $scope.mediaFile.name == ''){
             alert("Workshop image should not be blank");
             return false;
         }
-        if($scope.multiImages.length < 1){
+        if(!$scope.currentKeyEditing && $scope.multiImages.length < 1){
             alert("Workshop gallery images should not be blank");
             return false;
         }
-        if($scope.reqImageArray.length < 1){
+        if(!$scope.currentKeyEditing && $scope.reqImageArray.length < 1){
             alert("Workshop gallery images should not be blank");
             return false;
         }
