@@ -35,7 +35,7 @@
                             <label for="coupon_desc">Coupon Type</label>
                             <div class="form-line">
                                 <select ng-model="$parent.coupon_type" class="form-control">
-                                    <option ng-selected="$parent.coupon_type == 'percent'" value="percent">Precentage</option>
+                                    <option ng-selected="$parent.coupon_type == 'percent'" value="percent">Percentage</option>
                                     <option ng-selected="$parent.coupon_type == 'flat'" value="flat">Flat</option>
                                 </select>
                             </div>
@@ -48,14 +48,14 @@
                             </div>
                         </div>
                         <button type="button" class="btn btn-primary m-t-15 waves-effect"
-                            ng-disabled="$parent.isLoading" ng-click="$parent.coupon()">Save</button>
+                            ng-disabled="$parent.isLoading" ng-click="$parent.saveCoupon()">Save</button>
                     </div>
                 </div>
             </div>
             <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
                 <div class="card">
                     <div class="header">
-                        <h2>Category List</h2>
+                        <h2>Coupons List</h2>
                     </div>
                     <div class="body table-responsive">
                         <table class="table table-bordered">
@@ -76,11 +76,11 @@
                                     <td ng-bind="cL.coupon_value"></td>
                                     <td>
                                         <button type="button" class="btn btn-primary btn-xs waves-effect"
-                                            ng-click="$parent.editCoupon($parent.cpnKeys[$index])">
+                                            ng-click="$parent.editCoupon(cL)">
                                             <i class="material-icons">edit</i>
                                         </button>
                                         <button type="button" class="btn btn-danger btn-xs waves-effect"
-                                            ng-click="$parent.deleteCoupon($parent.cpnKeys[$index])">
+                                            ng-click="$parent.deleteCoupon(cL)">
                                             <i class="material-icons">delete</i>
                                         </button>
                                     </td>

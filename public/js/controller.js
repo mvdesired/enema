@@ -336,6 +336,9 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
     }
     $scope.removeFullSlot = function(index){
         $scope.courseTimeSlots.splice(index,1);
+        angular.forEach($scope.courseTimeSlots,function(v,k){
+            v.slot_id = k;
+        });
     }
     $scope.editCourse = function(key,$index){
         $scope.course_name = key.course_name;
@@ -543,6 +546,9 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
             $scope.courseList.$remove(key);
         }
     };
+    $scope.cancelCourseEditing = function(){
+        $window.location.reload();
+    }
     $scope.galleryImage = function(event){
         for(var i = 0;i<event.target.files.length;i++){
             var currentFile = event.target.files[i];
@@ -770,19 +776,86 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
     /****** Coupons Functions ******/
     $scope.getCouponsList = function(){
         var couponbject = $scope.fDB.ref('APP_DATA').child('COUPON_CODES');
-        var obj = $firebaseObject(couponbject);
-        var cpnObj = [];
+        $scope.cpnList = $firebaseArray(couponbject);
+        /*$scope.cpnList = [];
         $scope.cpnKeys = [];
         obj.$loaded().then(function() {
             // To iterate the key/value pairs of the object, use angular.forEach()
+            console.log(obj);
             angular.forEach(obj, function(value, key) {
-                cpnObj.push(value);
+                $scope.cpnList.push(value);
                $scope.cpnKeys.push(key);
             });
-        });
-        $scope.cpnList = cpnObj;
-        obj.$bindTo($scope, "cpnList");
+        });*/
+        //$scope.cpnList= cpnObj;
+        //obj.$bindTo($scope, "cpnList");
     };
+    $scope.editCoupon = function(key){
+        console.log(key);
+        var catDObject = $scope.fDB.ref('APP_DATA').child('COUPON_CODES').child(key.$id);
+        var obj = $firebaseArray(catDObject);
+        obj.$loaded().then(function() {
+            $scope.coupon_code = obj[0].$value;//.coupon_code;
+            $scope.coupon_desc = obj[1].$value;//.coupon_desc;
+            $scope.coupon_title = obj[2].$value;//.coupon_title;
+            $scope.coupon_type = obj[3].$value;//.coupon_type;
+            $scope.coupon_value = parseFloat(obj[4].$value);//.coupon_value;
+            $scope.curCouponKey = key.$id;
+        });
+    }
+    $scope.saveCoupon = function(){
+        $scope.isLoading = true;
+        if($scope.curCouponKey){
+            var couponObject = $scope.fDB.ref('APP_DATA').child('COUPON_CODES').child($scope.curCouponKey);
+            var obj = {};
+            obj.coupon_code = $scope.coupon_code;
+            obj.coupon_desc = $scope.coupon_desc;
+            obj.coupon_title = $scope.coupon_title;
+            obj.coupon_type = $scope.coupon_type;
+            obj.coupon_value = $scope.coupon_value;
+            couponObject.update(obj);
+            $scope.showNoti(200,"Coupon Updated");
+            $scope.curCouponKey = '';
+            $scope.coupon_code = '';
+            $scope.coupon_desc = '';
+            $scope.coupon_title = '';
+            $scope.coupon_type = '';
+            $scope.coupon_value = '';
+            $scope.isLoading = false;
+        }
+        else{
+            var CouponObject = $scope.fDB.ref('APP_DATA').child('COUPON_CODES');
+            $firebaseArray(CouponObject).$add({
+                'coupon_code': $scope.coupon_code,
+                'coupon_desc': $scope.coupon_desc,
+                'coupon_title': $scope.coupon_title,
+                'coupon_type': $scope.coupon_type,
+                'coupon_value': $scope.coupon_value,
+            });
+            $scope.showNoti(200,'Coupon Added Successfully');
+            $scope.coupon_code = '';
+            $scope.coupon_desc = '';
+            $scope.coupon_title = '';
+            $scope.coupon_type = '';
+            $scope.coupon_value = '';
+            $scope.isLoading = false;
+        }
+    }
+    $scope.deleteCoupon = function(key){
+        var confirmThis = confirm("Do you want to delete this course?");
+        if(confirmThis){
+            $scope.showNoti(200,"Course Deleted");
+            $scope.cpnList.$remove(key);
+        }
+        /*var couponObject = $scope.fDB.ref('APP_DATA').child('COUPON_CODES').child(key);
+        var obj = $firebaseObject(couponObject);
+        obj.$remove().then(function(ref) {
+            $scope.showNoti(200,"Coupon Deleted");
+        }, function(error) {
+            console.log("Error:", error);
+            $scope.showNoti(404,error);
+        });*/
+    }
     /****** Coupons Functions ******/
     $scope.getBookingList = function(){
         var bookingObject = $scope.fDB.ref('USER_DATA').child('USERS_BOOKINGS');
