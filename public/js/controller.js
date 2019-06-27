@@ -812,7 +812,7 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
             obj.coupon_desc = $scope.coupon_desc;
             obj.coupon_title = $scope.coupon_title;
             obj.coupon_type = $scope.coupon_type;
-            obj.coupon_value = $scope.coupon_value;
+            obj.coupon_value = ''+$scope.coupon_value;
             couponObject.update(obj);
             $scope.showNoti(200,"Coupon Updated");
             $scope.curCouponKey = '';
@@ -830,7 +830,7 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
                 'coupon_desc': $scope.coupon_desc,
                 'coupon_title': $scope.coupon_title,
                 'coupon_type': $scope.coupon_type,
-                'coupon_value': $scope.coupon_value,
+                'coupon_value': ''+$scope.coupon_value,
             });
             $scope.showNoti(200,'Coupon Added Successfully');
             $scope.coupon_code = '';
