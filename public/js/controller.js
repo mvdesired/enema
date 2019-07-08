@@ -2,7 +2,6 @@ enemaApp.controller('enemaController',['$scope','$location','$localStorage','$fi
 function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseStorage,$firebaseArray,$routeParams,$window,fileReader,$route){
     var newDate = new Date();
     var todayDate = newDate.getDate();
-    console.log(todayDate);
     $scope.$lcl = $localStorage;
     $scope.fAuth = $firebaseAuth();
     $scope.fDB = firebase.database();
@@ -469,7 +468,7 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
                     csrObj.course_category = $scope.course_category;
                     csrObj.COURSE_REQUIRED='';//courseRequiredData;
                     csrObj.course_image=url;
-                    csrObj.course_rating='4.5';
+                    csrObj.course_rating='0';
                     csrObj.course_id=''+totalCount+'';
                     csrObj.course_rating_count=""+Math.floor((Math.random() * 300) + 500)+"";
                     csrObj.COURSE_SLOT=$scope.courseTimeSlots;
@@ -589,6 +588,7 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
             angular.forEach(obj.AD_SLIDER,function(v,k){
                 $scope.ad_sliders.push({ad_click:v.ad_click,ad_price:v.ad_price,ad_title:v.ad_title,workshop:v.workshop,ad_image:v.ad_image,adKey:k});
             });
+            console.log($scope.ad_sliders);
             $scope.ad_sliders.push({ad_click:'',ad_price:'',ad_title:'',workshop:0,ad_image:'',adKey:$scope.ad_sliders.length});
             $scope.ad_home_screen_ads = obj.HOME_SCREEN_ADS.TOP_SCREEN;
         });
@@ -687,6 +687,7 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
     };
     $scope.saveAdSlider = function(){
         $scope.isLoading = true;
+        console.log($scope.adMediaFile);
         if($scope.adMediaFile.length > 0){
             for(var i = 0;i<$scope.adMediaFile.length;i++){
                 if($scope.adMediaFile[i]){
@@ -697,15 +698,27 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
                         uploadTask.$complete(snapshot=>{
                             var imagePath = $scope.fStorage.ref(snapshot.metadata.fullPath);
                             $firebaseStorage(imagePath).$getDownloadURL().then(function(url) {
-                                var catDObject = $scope.fDB.ref('APP_DATA').child('ADS_DATA').child('AD_SLIDER').child($scope.ad_sliders[k].adKey);
-                                var obj = $firebaseObject(catDObject);
-                                obj.ad_image = url;
-                                obj.ad_click = $scope.ad_sliders[k].ad_click;
-                                obj.ad_price = $scope.ad_sliders[k].ad_price;
-                                obj.ad_title = $scope.ad_sliders[k].ad_title;
-                                obj.workshop = $scope.ad_sliders[k].workshop;
-                                obj.$save().then((res)=>{
-                                });
+                                if(typeof($scope.ad_sliders[k].adKey) == "string"){
+                                    //var catDObject = $scope.fDB.ref('APP_DATA').child('ADS_DATA').child('AD_SLIDER').child($scope.ad_sliders[k].adKey);
+                                    var adSliderObject = $scope.fDB.ref('APP_DATA').child('ADS_DATA').child('AD_SLIDER').child($scope.ad_sliders[k].adKey);
+                                    var obj = {};
+                                    obj.ad_image = url;
+                                    obj.ad_click = $scope.ad_sliders[k].ad_click;
+                                    obj.ad_title = $scope.ad_sliders[k].ad_title;
+                                    obj.ad_price = $scope.ad_sliders[k].ad_price;
+                                    obj.workshop = $scope.ad_sliders[k].workshop;
+                                    adSliderObject.update(obj);
+                                }
+                                else{
+                                    var catDObject = $scope.fDB.ref('APP_DATA').child('ADS_DATA').child('AD_SLIDER');
+                                    $firebaseArray(catDObject).$add({
+                                        ad_image : url,
+                                        ad_click : $scope.ad_sliders[k].ad_click,
+                                        ad_price : $scope.ad_sliders[k].ad_price,
+                                        ad_title : $scope.ad_sliders[k].ad_title,
+                                        workshop : $scope.ad_sliders[k].workshop,
+                                    });
+                                }
                                 if(k == ($scope.adMediaFile.length-1)){
                                     $scope.showNoti(200,'Ad Slider updated Successfully');
                                     $scope.isLoading = false;
@@ -750,7 +763,7 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
             ad_price:'',
             workshop:'0',
             ad_image:'',
-            adKey:$scope.ad_sliders.length
+            adKey:$scope.ad_sliders.length+1
         });
     }
     $scope.removeAdSlider = function(index){
