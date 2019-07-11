@@ -541,9 +541,127 @@ function($scope,$location,$localStorage,$firebaseAuth,$firebaseObject,$firebaseS
     $scope.deleteCourse = function(key){
         var confirmThis = confirm("Do you want to delete this course?");
         if(confirmThis){
-            $scope.showNoti(200,"Course Deleted");
-            $scope.courseList.$remove(key);
+            $scope.mainLoader = true;
+            
+            
+            /* Remove workshop from Ad Deals*/
+            var adsWorkshopData = $scope.fDB.ref('APP_DATA').child('ADS_DATA').child('AD_DEALS');
+            var adsWorkshopDataA = $firebaseObject(adsWorkshopData);
+            adsWorkshopDataA.$loaded().then(function(){
+                if(adsWorkshopDataA.deal_1.workshop == key.$id){
+                    var WSObject = $scope.fDB.ref('APP_DATA').child('ADS_DATA').child('AD_DEALS').child('deal_1');
+                    var obj ={};
+                    obj.workshop = "-1";
+                    WSObject.update(obj);
+                }
+                if(adsWorkshopDataA.deal_2.workshop == key.$id){
+                    var WSObject = $scope.fDB.ref('APP_DATA').child('ADS_DATA').child('AD_DEALS').child('deal_2');
+                    var obj ={};
+                    obj.workshop = "-1";
+                    WSObject.update(obj);
+                }
+                if(adsWorkshopDataA.deal_3.workshop == key.$id){
+                    var WSObject = $scope.fDB.ref('APP_DATA').child('ADS_DATA').child('AD_DEALS').child('deal_3');
+                    var obj ={};
+                    obj.workshop = "-1";
+                    WSObject.update(obj);
+                }
+                if(adsWorkshopDataA.deal_4.workshop == key.$id){
+                    var WSObject = $scope.fDB.ref('APP_DATA').child('ADS_DATA').child('AD_DEALS').child('deal_4');
+                    var obj ={};
+                    obj.workshop = "-1";
+                    WSObject.update(obj);
+                }
+            });
+            /* Remove workshop from Ad slider*/
+            var adsliderWorkshopData = $scope.fDB.ref('APP_DATA').child('ADS_DATA').child('AD_SLIDER');
+            var adsliderWorkshopDataA = $firebaseObject(adsliderWorkshopData);
+            adsliderWorkshopDataA.$loaded().then(function(){
+                angular.forEach(adsliderWorkshopDataA,function(v,k){
+                    if(v.workshop == key.$id){
+                        var ASRef = $scope.fDB.ref('APP_DATA').child('ADS_DATA').child('AD_SLIDER').child(k);
+                        var ASRefObj = $firebaseObject(ASRef);
+                        ASRefObj.$loaded().then(function(){
+                            ASRefObj.$remove(k);
+                        });
+                    }
+                });
+            });
+            /* Remove workshop from HOME_SCREEN_ADS*/
+            var adsHTSWorkshopData = $scope.fDB.ref('APP_DATA').child('ADS_DATA').child('HOME_SCREEN_ADS').child('TOP_SCREEN');
+            var adsHTSWorkshopDataA = $firebaseObject(adsHTSWorkshopData);
+            adsHTSWorkshopDataA.$loaded().then(function(){
+                if(adsHTSWorkshopDataA.workshop == key.$id){
+                    var obj = {};
+                    obj.workshop = "-1";
+                    adsHTSWorkshopData.update(obj);
+                }
+            });
+            /* Remove workshop from Booking Cancel*/
+            var bookingCanelWorkshopData = $scope.fDB.ref('APP_DATA').child('BOOKINGS_CANCEL');
+            var bookingCanelWorkshopDataA = $firebaseObject(bookingCanelWorkshopData);
+            bookingCanelWorkshopDataA.$loaded().then(function(){
+                angular.forEach(bookingCanelWorkshopDataA,function(v,k){
+                    if(v.course_id == key.$id){
+                        var ASRef = $scope.fDB.ref('APP_DATA').child('BOOKINGS_CANCEL').child(k);
+                        var ASRefObj = $firebaseObject(ASRef);
+                        ASRefObj.$loaded().then(function(){
+                            ASRefObj.$remove(k);
+                        });
+                    }
+                });
+            });
+            /* Remove workshop from Review data*/
+            var reviewDataWorkshopData = $scope.fDB.ref('APP_DATA').child('REVIEW_DATA').child(key.$id);
+            var reviewDataWorkshopDataA = $firebaseObject(reviewDataWorkshopData);
+            reviewDataWorkshopDataA.$loaded().then(function(){
+                reviewDataWorkshopDataA.$remove();
+            });
+            /* Remove workshop from Booking Cancel*/
+            var userBookingWorkshopData = $scope.fDB.ref('USER_DATA').child('USERS_BOOKINGS');
+            var userBookingWorkshopDataA = $firebaseObject(userBookingWorkshopData);
+            userBookingWorkshopDataA.$loaded().then(function(){
+                angular.forEach(userBookingWorkshopDataA,function(v,k){
+                    var uBSWorkshopData = $scope.fDB.ref('USER_DATA').child('USERS_BOOKINGS').child(k);
+                    var uBSWorkshopDataA = $firebaseObject(uBSWorkshopData);
+                    uBSWorkshopDataA.$loaded().then(function(){
+                        angular.forEach(uBSWorkshopDataA,function(val,ukey){
+                            if(val.course_id == key.$id){
+                                var ASRef = $scope.fDB.ref('USER_DATA').child('USERS_BOOKINGS').child(k).child(ukey);
+                                var ASRefObj = $firebaseObject(ASRef);
+                                ASRefObj.$loaded().then(function(){
+                                    ASRefObj.$remove(ukey);
+                                });
+                            }
+                        });
+                    });
+                });
+            });
         }
+        /* Remove workshop from Wish List*/
+        var wishlistWorkshopData = $scope.fDB.ref('USER_DATA').child('WISHLIST_DATA');
+        var wishlistWorkshopDataA = $firebaseObject(wishlistWorkshopData);
+        wishlistWorkshopDataA.$loaded().then(function(){
+            angular.forEach(wishlistWorkshopDataA,function(v,k){
+                var wLSWorkshopData = $scope.fDB.ref('USER_DATA').child('WISHLIST_DATA').child(k);
+                var wLSWorkshopDataA = $firebaseObject(wLSWorkshopData);
+                wLSWorkshopDataA.$loaded().then(function(){
+                    angular.forEach(wLSWorkshopDataA,function(val,ukey){
+                        if(val.course_id == key.$id){
+                            var ASRef = $scope.fDB.ref('USER_DATA').child('WISHLIST_DATA').child(k).child(ukey);
+                            var ASRefObj = $firebaseObject(ASRef);
+                            ASRefObj.$loaded().then(function(){
+                                ASRefObj.$remove(ukey);
+                            });
+                        }
+                    });
+                    
+                });
+            });
+        });
+        $scope.mainLoader = false;
+        $scope.showNoti(200,"Course Deleted");
+        $scope.courseList.$remove(key);
     };
     $scope.cancelCourseEditing = function(){
         $window.location.reload();
